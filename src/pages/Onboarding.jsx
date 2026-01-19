@@ -32,6 +32,12 @@ export default function Onboarding() {
 
   const checkExistingProfile = async () => {
     try {
+      const isAuth = await base44.auth.isAuthenticated();
+      if (!isAuth) {
+        base44.auth.redirectToLogin(window.location.href);
+        return;
+      }
+
       const user = await base44.auth.me();
       if (user?.full_name) {
         setUserName(user.full_name.split(' ')[0]);
@@ -43,7 +49,7 @@ export default function Onboarding() {
         navigate(createPageUrl('Dashboard'));
       }
     } catch (error) {
-      console.log('No existing profile');
+      console.log('Error checking profile:', error);
     }
   };
 
@@ -52,6 +58,12 @@ export default function Onboarding() {
     
     setLoading(true);
     try {
+      const isAuth = await base44.auth.isAuthenticated();
+      if (!isAuth) {
+        base44.auth.redirectToLogin(window.location.href);
+        return;
+      }
+
       const user = await base44.auth.me();
       const profiles = await base44.entities.StudentProfile.filter({ created_by: user.email });
       
