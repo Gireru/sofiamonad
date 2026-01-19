@@ -171,7 +171,7 @@ export default function Dashboard() {
             <h2 className="text-lg font-bold text-slate-700 mb-4 flex items-center gap-2">
               <span className="text-xl">🚀</span> Acciones rápidas
             </h2>
-            <QuickActions />
+            <QuickActions studentGrade={profile.grade} />
           </section>
 
           {/* Stats */}

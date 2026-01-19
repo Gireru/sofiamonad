@@ -61,10 +61,21 @@ const actions = [
   }
 ];
 
-export default function QuickActions() {
+export default function QuickActions({ studentGrade }) {
+  // Determinar si es de 1° a 3° de primaria
+  const isEarlyGrade = ['1_primaria', '2_primaria', '3_primaria'].includes(studentGrade);
+  
+  // Acciones básicas para 1° a 3° primaria
+  const basicActionsIds = ['tutor', 'creative', 'free', 'shop'];
+  
+  // Filtrar acciones según el grado
+  const filteredActions = isEarlyGrade 
+    ? actions.filter(action => basicActionsIds.includes(action.id))
+    : actions;
+
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-      {actions.map((action, i) => {
+      {filteredActions.map((action, i) => {
         const Icon = action.icon;
         return (
           <motion.div
