@@ -151,21 +151,47 @@ FORMATO:
     setAvatarState('thinking');
 
     try {
-      const response = await base44.integrations.Core.InvokeLLM({
-        prompt: message,
-        add_context_from_internet: currentMode === 'tutor',
-        response_json_schema: null
-      });
+      // Detectar si el estudiante pide generar una imagen
+      const imageKeywords = [
+        'dibuja', 'dibújame', 'genera una imagen', 'crea una imagen', 
+        'hazme un dibujo', 'muéstrame', 'ilustra', 'explícalo con un dibujo',
+        'haz un dibujo', 'puedes dibujar', 'imagen de'
+      ];
+      
+      const requestsImage = imageKeywords.some(keyword => 
+        message.toLowerCase().includes(keyword)
+      );
 
-      // Build context with system prompt
-      const fullPrompt = `${getSystemPrompt()}\n\nHistorial de conversación:\n${messages.map(m => `${m.role === 'user' ? profile?.display_name : profile?.companion_name}: ${m.content}`).join('\n')}\n\n${profile?.display_name}: ${message}\n\n${profile?.companion_name}:`;
+      if (requestsImage) {
+        // Generar imagen educativa
+        setMessages(prev => [...prev, { 
+          role: 'assistant', 
+          content: `¡Perfecto! Voy a crear un dibujo para ti... 🎨✨` 
+        }]);
 
-      const aiResponse = await base44.integrations.Core.InvokeLLM({
-        prompt: fullPrompt,
-        add_context_from_internet: currentMode === 'tutor'
-      });
+        const imagePrompt = `Educational illustration, 3D Render, Pixar style, colorful and child-friendly, warm lighting, high quality: ${message}. 
+Negative prompt: violence, scary, dark, photorealistic, adult content, weapons, blood`;
 
-      setMessages(prev => [...prev, { role: 'assistant', content: aiResponse }]);
+        const { url } = await base44.integrations.Core.GenerateImage({
+          prompt: imagePrompt
+        });
+
+        setMessages(prev => [...prev, { 
+          role: 'assistant', 
+          content: `¡Aquí está! 🎉`,
+          image: url
+        }]);
+      } else {
+        // Respuesta normal del LLM
+        const fullPrompt = `${getSystemPrompt()}\n\nHistorial de conversación:\n${messages.map(m => `${m.role === 'user' ? profile?.display_name : profile?.companion_name}: ${m.content}`).join('\n')}\n\n${profile?.display_name}: ${message}\n\n${profile?.companion_name}:`;
+
+        const aiResponse = await base44.integrations.Core.InvokeLLM({
+          prompt: fullPrompt,
+          add_context_from_internet: currentMode === 'tutor'
+        });
+
+        setMessages(prev => [...prev, { role: 'assistant', content: aiResponse }]);
+      }
     } catch (error) {
       console.error('Error getting response:', error);
       setMessages(prev => [...prev, { 
@@ -261,6 +287,7 @@ FORMATO:
                 avatarType={profile.avatar_type}
                 companionName={profile.companion_name}
                 userName={profile.display_name}
+                image={msg.image}
               />
             ))}
             

@@ -8,7 +8,8 @@ export default function ChatMessage({
   isUser, 
   avatarType = 'robot',
   companionName = 'Lia',
-  userName = 'Tú'
+  userName = 'Tú',
+  image = null
 }) {
   return (
     <motion.div
@@ -42,13 +43,25 @@ export default function ChatMessage({
           {isUser ? (
             <p className="text-sm leading-relaxed whitespace-pre-wrap">{message}</p>
           ) : (
-            <ReactMarkdown 
-              className="text-sm leading-relaxed prose prose-sm max-w-none prose-slate
-                prose-p:my-1 prose-headings:my-2 prose-ul:my-1 prose-li:my-0.5
-                prose-code:bg-slate-100 prose-code:px-1 prose-code:rounded prose-code:text-sky-600"
-            >
-              {message}
-            </ReactMarkdown>
+            <>
+              <ReactMarkdown 
+                className="text-sm leading-relaxed prose prose-sm max-w-none prose-slate
+                  prose-p:my-1 prose-headings:my-2 prose-ul:my-1 prose-li:my-0.5
+                  prose-code:bg-slate-100 prose-code:px-1 prose-code:rounded prose-code:text-sky-600"
+              >
+                {message}
+              </ReactMarkdown>
+              
+              {image && (
+                <motion.img
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  src={image}
+                  alt="Imagen generada"
+                  className="mt-3 rounded-xl max-w-full h-auto shadow-lg"
+                />
+              )}
+            </>
           )}
         </div>
       </div>
