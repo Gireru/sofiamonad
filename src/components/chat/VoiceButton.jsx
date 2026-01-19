@@ -12,6 +12,7 @@ export default function VoiceButton({
 }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentWordIndex, setCurrentWordIndex] = useState(-1);
+  const [voicesLoaded, setVoicesLoaded] = useState(false);
   const utteranceRef = useRef(null);
   const wordsRef = useRef([]);
 
@@ -19,12 +20,23 @@ export default function VoiceButton({
     // Preparar palabras para highlighting
     wordsRef.current = text.split(' ');
 
-    if (autoPlay && text) {
+    // Cargar voces disponibles
+    const loadVoices = () => {
+      const voices = window.speechSynthesis.getVoices();
+      if (voices.length > 0) {
+        setVoicesLoaded(true);
+      }
+    };
+
+    loadVoices();
+    window.speechSynthesis.onvoiceschanged = loadVoices;
+
+    if (autoPlay && text && voicesLoaded) {
       // Pequeño delay para que el mensaje se renderice primero
       const timer = setTimeout(() => speak(), 300);
       return () => clearTimeout(timer);
     }
-  }, [text, autoPlay]);
+  }, [text, autoPlay, voicesLoaded]);
 
   useEffect(() => {
     if (onPlayingChange) {
@@ -40,50 +52,77 @@ export default function VoiceButton({
       const utterance = new SpeechSynthesisUtterance(text);
       utteranceRef.current = utterance;
 
+      // Cargar preferencias de usuario
+      const voiceSettings = JSON.parse(localStorage.getItem('sofia_voice_settings') || '{}');
+      const { rate = 0.95, pitch, selectedVoiceUri } = voiceSettings;
+
       // Configurar voz según nombre del compañero
       // CASO A: Si nombre es "Lia" → voz femenina
       // CASO B: Si nombre es "Leo" → voz masculina
       // CASO C (DEFAULT): Cualquier otro nombre personalizado → voz de Leo (masculina energética)
       const voices = window.speechSynthesis.getVoices();
       let selectedVoice = null;
-      let useFemaleVoice = false;
+      let useFemaleVoice = companionName === 'Lia';
 
-      // Determinar si usar voz femenina o masculina
-      if (companionName === 'Lia') {
-        useFemaleVoice = true;
-      } else {
-        // Leo o cualquier nombre personalizado → voz masculina (default)
-        useFemaleVoice = false;
+      // Si el usuario ha seleccionado una voz específica, usarla
+      if (selectedVoiceUri) {
+        selectedVoice = voices.find(v => v.voiceURI === selectedVoiceUri);
       }
 
-      if (useFemaleVoice) {
-        // VOICE_FEM_SOFT: Buscar voz femenina en español (Tono dulce, pausado, estilo narradora)
-        selectedVoice = voices.find(voice => 
-          voice.lang.includes('es') && voice.name.toLowerCase().includes('female')
-        ) || voices.find(voice => 
-          voice.lang.includes('es') && voice.name.toLowerCase().includes('mujer')
-        ) || voices.find(voice => 
-          voice.lang.includes('es') && voice.name.toLowerCase().includes('paulina')
-        ) || voices.find(voice => voice.lang.includes('es'));
-      } else {
-        // VOICE_MASC_ENERGETIC: Buscar voz masculina en español (Tono aventurero, seguro, amigable)
-        selectedVoice = voices.find(voice => 
-          voice.lang.includes('es') && voice.name.toLowerCase().includes('male')
-        ) || voices.find(voice => 
-          voice.lang.includes('es') && voice.name.toLowerCase().includes('hombre')
-        ) || voices.find(voice => 
-          voice.lang.includes('es') && voice.name.toLowerCase().includes('jorge')
-        ) || voices.find(voice => voice.lang.includes('es'));
+      // Si no hay voz personalizada o no se encuentra, usar la lógica por defecto
+      if (!selectedVoice) {
+        if (useFemaleVoice) {
+          // VOICE_FEM_SOFT: Buscar voces femeninas de alta calidad en español
+          selectedVoice = voices.find(voice => 
+            voice.lang.includes('es') && 
+            voice.name.toLowerCase().includes('monica')
+          ) || voices.find(voice => 
+            voice.lang.includes('es') && 
+            voice.name.toLowerCase().includes('paulina')
+          ) || voices.find(voice => 
+            voice.lang.includes('es-MX') && 
+            voice.name.toLowerCase().includes('female')
+          ) || voices.find(voice => 
+            voice.lang.includes('es') && 
+            voice.name.toLowerCase().includes('female')
+          ) || voices.find(voice => 
+            voice.lang.includes('es') && 
+            voice.name.toLowerCase().includes('mujer')
+          ) || voices.find(voice => voice.lang.includes('es-MX'))
+            || voices.find(voice => voice.lang.includes('es'));
+        } else {
+          // VOICE_MASC_ENERGETIC: Buscar voces masculinas de alta calidad en español
+          selectedVoice = voices.find(voice => 
+            voice.lang.includes('es') && 
+            voice.name.toLowerCase().includes('diego')
+          ) || voices.find(voice => 
+            voice.lang.includes('es') && 
+            voice.name.toLowerCase().includes('jorge')
+          ) || voices.find(voice => 
+            voice.lang.includes('es-MX') && 
+            voice.name.toLowerCase().includes('male')
+          ) || voices.find(voice => 
+            voice.lang.includes('es') && 
+            voice.name.toLowerCase().includes('male')
+          ) || voices.find(voice => 
+            voice.lang.includes('es') && 
+            voice.name.toLowerCase().includes('hombre')
+          ) || voices.find(voice => voice.lang.includes('es-MX'))
+            || voices.find(voice => voice.lang.includes('es'));
+        }
       }
 
       if (selectedVoice) {
         utterance.voice = selectedVoice;
       }
 
-      // Velocidad: 0.95x (ligeramente más lento para mejorar dicción en palabras educativas)
-      utterance.rate = 0.95;
-      // Entonación: alta variabilidad para evitar tono monótono
-      utterance.pitch = useFemaleVoice ? 1.1 : 1.0;
+      // Velocidad personalizable (0.95x default para mejor dicción)
+      utterance.rate = rate;
+      
+      // Entonación: usar personalizada o default según género
+      utterance.pitch = pitch !== undefined ? pitch : (useFemaleVoice ? 1.1 : 1.0);
+      
+      // Volumen máximo para claridad
       utterance.volume = 1;
 
       // Eventos

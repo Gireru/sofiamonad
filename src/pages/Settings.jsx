@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 
 import Avatar3D from '@/components/avatars/Avatar3D';
+import VoiceSettings from '@/components/settings/VoiceSettings';
 
 export default function Settings() {
   const navigate = useNavigate();
@@ -356,6 +357,9 @@ export default function Settings() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Voice Settings */}
+        <VoiceSettings companionName={profile.companion_name} />
 
         {/* Appearance */}
         <Card className="bg-white/70 backdrop-blur-sm border-white/50">
