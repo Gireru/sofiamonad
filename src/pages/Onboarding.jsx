@@ -82,19 +82,55 @@ export default function Onboarding() {
       // Guardar localmente
       localStorage.setItem('sofia_profile', JSON.stringify(finalProfile));
 
-      // Si está autenticado, también guardar en la base de datos
+      let generatedCodes = null;
+
+      // Si está autenticado, también guardar en la base de datos y generar códigos
       const isAuth = await base44.auth.isAuthenticated();
       if (isAuth) {
         const user = await base44.auth.me();
         const profiles = await base44.entities.StudentProfile.filter({ created_by: user.email });
-        
+
+        let studentProfile;
         if (profiles.length > 0) {
           await base44.entities.StudentProfile.update(profiles[0].id, finalProfile);
+          studentProfile = profiles[0];
         } else {
-          await base44.entities.StudentProfile.create(finalProfile);
+          studentProfile = await base44.entities.StudentProfile.create(finalProfile);
+        }
+
+        // GENERACIÓN AUTOMÁTICA DE CÓDIGOS (Padre y Maestro)
+        try {
+          // Código para Padre
+          const parentCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+          await base44.entities.ParentAccess.create({
+            access_code: parentCode,
+            student_id: studentProfile.id,
+            is_active: true
+          });
+
+          // Código para Maestro
+          const teacherCode = Math.random().toString(36).substring(2, 8).toUpperCase();
+          const expiresAt = new Date();
+          expiresAt.setDate(expiresAt.getDate() + 30); // Válido por 30 días
+          await base44.entities.TeacherToken.create({
+            token_code: teacherCode,
+            student_id: studentProfile.id,
+            parent_email: user.email,
+            expires_at: expiresAt.toISOString(),
+            is_used: false
+          });
+
+          generatedCodes = { parentCode, teacherCode };
+        } catch (error) {
+          console.error('Error generating codes:', error);
         }
       }
-      
+
+      // Si se generaron códigos, mostrarlos antes de navegar
+      if (generatedCodes) {
+        localStorage.setItem('sofia_welcome_codes', JSON.stringify(generatedCodes));
+      }
+
       navigate(createPageUrl('Dashboard'));
     } catch (error) {
       console.error('Error completo:', error);

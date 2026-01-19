@@ -4,7 +4,8 @@ import { base44 } from '@/api/base44Client';
 import { useNavigate, Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Button } from '@/components/ui/button';
-import { Zap, Clock, Star, Trophy, Settings, ChevronRight, MessageSquare } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Zap, Clock, Star, Trophy, Settings, ChevronRight, MessageSquare, Copy, Check } from 'lucide-react';
 
 import Avatar3D from '@/components/avatars/Avatar3D';
 import StatsCard from '@/components/dashboard/StatsCard';
@@ -15,10 +16,22 @@ export default function Dashboard() {
   const navigate = useNavigate();
   const [profile, setProfile] = useState(null);
   const [greeting, setGreeting] = useState('');
+  const [showCodesModal, setShowCodesModal] = useState(false);
+  const [welcomeCodes, setWelcomeCodes] = useState(null);
+  const [copiedParent, setCopiedParent] = useState(false);
+  const [copiedTeacher, setCopiedTeacher] = useState(false);
 
   useEffect(() => {
     loadProfile();
     updateGreeting();
+    
+    // Verificar si hay códigos de bienvenida para mostrar
+    const codes = localStorage.getItem('sofia_welcome_codes');
+    if (codes) {
+      setWelcomeCodes(JSON.parse(codes));
+      setShowCodesModal(true);
+      localStorage.removeItem('sofia_welcome_codes');
+    }
   }, []);
 
   const updateGreeting = () => {
@@ -26,6 +39,17 @@ export default function Dashboard() {
     if (hour < 12) setGreeting('¡Buenos días');
     else if (hour < 18) setGreeting('¡Buenas tardes');
     else setGreeting('¡Buenas noches');
+  };
+
+  const copyCode = (code, type) => {
+    navigator.clipboard.writeText(code);
+    if (type === 'parent') {
+      setCopiedParent(true);
+      setTimeout(() => setCopiedParent(false), 2000);
+    } else {
+      setCopiedTeacher(true);
+      setTimeout(() => setCopiedTeacher(false), 2000);
+    }
   };
 
   const loadProfile = async () => {
@@ -220,7 +244,87 @@ export default function Dashboard() {
           </motion.section>
 
         </div>
-      </main>
-    </div>
-  );
-}
+        </main>
+
+        {/* Modal de Códigos de Bienvenida */}
+        <Dialog open={showCodesModal} onOpenChange={setShowCodesModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-2xl text-center">
+              <span className="text-3xl mb-2 block">🎉</span>
+              ¡Misión Cumplada!
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-6 py-4">
+            <p className="text-center text-slate-600">
+              Aquí están tus códigos mágicos para compartir
+            </p>
+
+            {/* Código de Padre */}
+            <div className="bg-purple-50 rounded-2xl p-4 border-2 border-purple-200">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-2xl">🛡️</span>
+                <h3 className="font-bold text-purple-800">Para tu Padre/Tutor</h3>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="flex-1 bg-white border border-purple-300 rounded-xl p-3 font-mono text-xl text-center text-purple-700">
+                  {welcomeCodes?.parentCode}
+                </div>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => copyCode(welcomeCodes?.parentCode, 'parent')}
+                  className="rounded-xl border-purple-300"
+                >
+                  {copiedParent ? <Check className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4" />}
+                </Button>
+              </div>
+              <p className="text-xs text-purple-600 mt-2 text-center">
+                Comparte este código para que puedan ver tu progreso
+              </p>
+            </div>
+
+            {/* Código de Maestro */}
+            <div className="bg-indigo-50 rounded-2xl p-4 border-2 border-indigo-200">
+              <div className="flex items-center gap-2 mb-3">
+                <span className="text-2xl">📚</span>
+                <h3 className="font-bold text-indigo-800">Para tu Maestro</h3>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="flex-1 bg-white border border-indigo-300 rounded-xl p-3 font-mono text-xl text-center text-indigo-700">
+                  {welcomeCodes?.teacherCode}
+                </div>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => copyCode(welcomeCodes?.teacherCode, 'teacher')}
+                  className="rounded-xl border-indigo-300"
+                >
+                  {copiedTeacher ? <Check className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4" />}
+                </Button>
+              </div>
+              <p className="text-xs text-indigo-600 mt-2 text-center">
+                Válido por 30 días
+              </p>
+            </div>
+
+            <div className="bg-amber-50 rounded-xl p-3 border border-amber-200">
+              <p className="text-xs text-amber-700 text-center">
+                💡 <strong>Consejo:</strong> Guarda estos códigos o cópialos ahora. 
+                También los encontrarás en Configuración.
+              </p>
+            </div>
+
+            <Button
+              onClick={() => setShowCodesModal(false)}
+              className="w-full rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-600 hover:to-indigo-600"
+            >
+              ¡Entendido!
+            </Button>
+          </div>
+        </DialogContent>
+        </Dialog>
+        </div>
+        );
+        }
