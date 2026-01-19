@@ -48,14 +48,19 @@ export default function Onboarding() {
   };
 
   const handleComplete = async () => {
+    if (loading) return;
+    
     setLoading(true);
     try {
       const user = await base44.auth.me();
       const profiles = await base44.entities.StudentProfile.filter({ created_by: user.email });
       
       const finalProfile = {
-        ...profile,
         display_name: profile.display_name || userName || 'Estudiante',
+        avatar_type: profile.avatar_type,
+        companion_name: profile.companion_name,
+        companion_personality: profile.companion_personality,
+        grade: profile.grade,
         onboarding_completed: true,
         xp_points: 0,
         total_sessions: 0,
@@ -69,12 +74,10 @@ export default function Onboarding() {
         await base44.entities.StudentProfile.create(finalProfile);
       }
       
-      // Pequeña pausa para que se vea la transición
-      await new Promise(resolve => setTimeout(resolve, 500));
       navigate(createPageUrl('Dashboard'));
     } catch (error) {
-      console.error('Error saving profile:', error);
-      alert('Hubo un error al guardar tu perfil. Por favor intenta de nuevo.');
+      console.error('Error completo:', error);
+      alert(`Error al guardar: ${error.message || 'Intenta de nuevo'}`);
       setLoading(false);
     }
   };
@@ -130,8 +133,12 @@ export default function Onboarding() {
           avatarType={profile.avatar_type}
           selectedPersonality={profile.companion_personality}
           customName={profile.companion_name}
-          onPersonalitySelect={(personality) => setProfile({ ...profile, companion_personality: personality })}
-          onCustomNameChange={(name) => setProfile({ ...profile, companion_name: name })}
+          onPersonalitySelect={(personality) => {
+            setProfile({ ...profile, companion_personality: personality });
+          }}
+          onCustomNameChange={(name) => {
+            setProfile({ ...profile, companion_name: name });
+          }}
         />
       )
     },
