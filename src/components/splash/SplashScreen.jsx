@@ -121,7 +121,7 @@ export default function SplashScreen({ onComplete }) {
       {/* Fase 3: La Llegada de los Guías */}
       <AnimatePresence>
         {phase >= 3 && (
-          <div className="absolute inset-0 flex items-center justify-center gap-12">
+          <div className="absolute inset-0 flex items-center justify-center gap-6 sm:gap-12 px-4">
             {/* Lia */}
             <motion.div
               initial={{ y: -200, opacity: 0, scale: 0.5, rotate: -20 }}
@@ -149,14 +149,14 @@ export default function SplashScreen({ onComplete }) {
                   repeat: Infinity,
                   ease: "easeInOut"
                 }}
-                className="w-32 h-32 bg-gradient-to-br from-pink-400 to-purple-500 rounded-full flex items-center justify-center shadow-2xl shadow-pink-500/50 border-4 border-white/50"
+                className="w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-br from-pink-400 to-purple-500 rounded-full flex items-center justify-center shadow-2xl shadow-pink-500/50 border-4 border-white/50"
               >
-                <span className="text-6xl">👧</span>
+                <span className="text-5xl sm:text-6xl">👧</span>
               </motion.div>
               
               {/* Mano saludando */}
               <motion.div
-                className="absolute -top-2 -right-2 text-3xl"
+                className="absolute -top-2 -right-2 text-2xl sm:text-3xl"
                 animate={{ rotate: [0, 20, -20, 0] }}
                 transition={{ duration: 0.5, delay: 0.5, repeat: 2 }}
               >
@@ -192,14 +192,14 @@ export default function SplashScreen({ onComplete }) {
                   ease: "easeInOut",
                   delay: 0.5
                 }}
-                className="w-32 h-32 bg-gradient-to-br from-sky-400 to-blue-500 rounded-full flex items-center justify-center shadow-2xl shadow-sky-500/50 border-4 border-white/50"
+                className="w-24 h-24 sm:w-32 sm:h-32 bg-gradient-to-br from-sky-400 to-blue-500 rounded-full flex items-center justify-center shadow-2xl shadow-sky-500/50 border-4 border-white/50"
               >
-                <span className="text-6xl">👦</span>
+                <span className="text-5xl sm:text-6xl">👦</span>
               </motion.div>
               
               {/* Gesto de acción */}
               <motion.div
-                className="absolute -top-4 -right-4 text-3xl"
+                className="absolute -top-4 -right-4 text-2xl sm:text-3xl"
                 animate={{ scale: [0, 1.2, 1] }}
                 transition={{ duration: 0.4, delay: 0.6 }}
               >
@@ -217,17 +217,17 @@ export default function SplashScreen({ onComplete }) {
             initial={{ y: -50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className="absolute top-12 left-1/2 -translate-x-1/2"
+            className="absolute top-8 sm:top-12 left-1/2 -translate-x-1/2"
           >
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 sm:gap-3">
               <motion.div
                 animate={{ rotate: [0, 360] }}
                 transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                className="w-12 h-12 rounded-xl bg-gradient-to-br from-sky-400 to-indigo-500 flex items-center justify-center shadow-lg"
+                className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-gradient-to-br from-sky-400 to-indigo-500 flex items-center justify-center shadow-lg"
               >
-                <Sparkles className="w-6 h-6 text-white" />
+                <Sparkles className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
               </motion.div>
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-sky-600 to-indigo-600 bg-clip-text text-transparent">
+              <h1 className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-sky-600 to-indigo-600 bg-clip-text text-transparent">
                 Sofia
               </h1>
             </div>
@@ -243,10 +243,10 @@ export default function SplashScreen({ onComplete }) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0 }}
             transition={{ delay: 0.8 }}
-            className="absolute bottom-32 left-1/2 -translate-x-1/2 text-center"
+            className="absolute bottom-20 left-0 right-0 mx-auto text-center px-4"
           >
-            <p className="text-2xl font-bold text-slate-700">¡Hola!</p>
-            <p className="text-lg text-slate-500">Bienvenido a Sofia</p>
+            <p className="text-2xl sm:text-3xl font-bold text-slate-700 mb-1">¡Hola!</p>
+            <p className="text-base sm:text-lg text-slate-500">Bienvenido a Sofia</p>
           </motion.div>
         )}
       </AnimatePresence>
