@@ -11,7 +11,8 @@ export default function ChatMessage({
   avatarType = 'robot',
   companionName = 'Lia',
   userName = 'Tú',
-  image = null
+  image = null,
+  onSpeak = null
 }) {
   return (
     <motion.div
@@ -46,13 +47,27 @@ export default function ChatMessage({
             <p className="text-sm leading-relaxed whitespace-pre-wrap">{message}</p>
           ) : (
             <>
-              <ReactMarkdown 
-                className="text-sm leading-relaxed prose prose-sm max-w-none prose-slate
-                  prose-p:my-1 prose-headings:my-2 prose-ul:my-1 prose-li:my-0.5
-                  prose-code:bg-slate-100 prose-code:px-1 prose-code:rounded prose-code:text-sky-600"
-              >
-                {message}
-              </ReactMarkdown>
+              <div className="flex items-start gap-2">
+                <ReactMarkdown 
+                  className="flex-1 text-sm leading-relaxed prose prose-sm max-w-none prose-slate
+                    prose-p:my-1 prose-headings:my-2 prose-ul:my-1 prose-li:my-0.5
+                    prose-code:bg-slate-100 prose-code:px-1 prose-code:rounded prose-code:text-sky-600"
+                >
+                  {message}
+                </ReactMarkdown>
+                
+                {onSpeak && !image && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => onSpeak(message)}
+                    className="h-7 w-7 rounded-full shrink-0 hover:bg-sky-100"
+                    title="Escuchar mensaje"
+                  >
+                    <Volume2 className="w-4 h-4 text-slate-400 hover:text-sky-600" />
+                  </Button>
+                )}
+              </div>
               
               {image && (
                 <motion.img
