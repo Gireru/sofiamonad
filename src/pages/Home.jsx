@@ -48,9 +48,13 @@ export default function Home() {
         navigate(createPageUrl('Onboarding'));
         break;
       case 'parent':
+        // Limpiar cualquier sesión de estudiante antes de ir al panel de padre
+        localStorage.removeItem('sofia_profile');
         navigate(createPageUrl('ParentLogin'));
         break;
       case 'teacher':
+        // Limpiar cualquier sesión de estudiante antes de ir al panel de maestro
+        localStorage.removeItem('sofia_profile');
         navigate(createPageUrl('TeacherDashboard'));
         break;
     }
