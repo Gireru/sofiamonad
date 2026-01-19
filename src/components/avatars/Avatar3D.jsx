@@ -19,6 +19,18 @@ const avatarConfigs = {
     gradient: 'from-orange-400 to-red-500',
     glow: 'shadow-orange-400/50',
     name: 'Zorro Explorador'
+  },
+  boy: {
+    emoji: '👦',
+    gradient: 'from-cyan-400 to-blue-500',
+    glow: 'shadow-cyan-400/50',
+    name: 'Niño'
+  },
+  girl: {
+    emoji: '👧',
+    gradient: 'from-pink-400 to-purple-500',
+    glow: 'shadow-pink-400/50',
+    name: 'Niña'
   }
 };
 

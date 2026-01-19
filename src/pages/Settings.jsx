@@ -203,8 +203,8 @@ export default function Settings() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-3 gap-3">
-              {['robot', 'owl', 'fox'].map((type) => (
+            <div className="grid grid-cols-3 sm:grid-cols-5 gap-3">
+              {['robot', 'owl', 'fox', 'boy', 'girl'].map((type) => (
                 <motion.button
                   key={type}
                   whileHover={{ scale: 1.05 }}
