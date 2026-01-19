@@ -9,7 +9,7 @@ import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { 
   ArrowLeft, User, Shield, Bell, Palette, Key, Copy, 
-  Check, LogOut, ChevronRight, RefreshCw
+  Check, LogOut, ChevronRight, RefreshCw, UserPlus
 } from 'lucide-react';
 
 import Avatar3D from '@/components/avatars/Avatar3D';
@@ -30,12 +30,26 @@ export default function Settings() {
 
   const loadData = async () => {
     try {
+      // Cargar perfil local
+      const localProfile = localStorage.getItem('sofia_profile');
+      if (localProfile) {
+        setProfile(JSON.parse(localProfile));
+      }
+
+      // Verificar autenticación
+      const isAuth = await base44.auth.isAuthenticated();
+      if (!isAuth) {
+        setLoading(false);
+        return;
+      }
+
       const userData = await base44.auth.me();
       setUser(userData);
       
       const profiles = await base44.entities.StudentProfile.filter({ created_by: userData.email });
       if (profiles.length > 0) {
         setProfile(profiles[0]);
+        localStorage.setItem('sofia_profile', JSON.stringify(profiles[0]));
         
         // Cargar código de acceso para padres si existe
         const access = await base44.entities.ParentAccess.filter({ 
@@ -55,8 +69,17 @@ export default function Settings() {
     if (!profile) return;
     setLoading(true);
     try {
-      await base44.entities.StudentProfile.update(profile.id, updates);
-      setProfile({ ...profile, ...updates });
+      const updatedProfile = { ...profile, ...updates };
+      
+      // Actualizar local
+      localStorage.setItem('sofia_profile', JSON.stringify(updatedProfile));
+      setProfile(updatedProfile);
+
+      // Si está autenticado, actualizar base de datos
+      const isAuth = await base44.auth.isAuthenticated();
+      if (isAuth && profile.id) {
+        await base44.entities.StudentProfile.update(profile.id, updates);
+      }
     } catch (error) {
       console.error('Error updating profile:', error);
     }
@@ -144,6 +167,32 @@ export default function Settings() {
 
       <main className="max-w-2xl mx-auto px-4 py-6 space-y-6">
         
+        {/* Account Status */}
+        {!user && (
+          <Card className="bg-gradient-to-r from-sky-50 to-indigo-50 border-2 border-sky-200">
+            <CardContent className="pt-6">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 rounded-full bg-sky-400 flex items-center justify-center flex-shrink-0">
+                  <UserPlus className="w-6 h-6 text-white" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-bold text-slate-800 mb-2">Crea una cuenta para guardar tu progreso</h3>
+                  <p className="text-sm text-slate-600 mb-4">
+                    Actualmente usas Sofia sin cuenta. Crea una para sincronizar tu progreso en todos tus dispositivos.
+                  </p>
+                  <Button
+                    onClick={() => base44.auth.redirectToLogin(window.location.href)}
+                    className="bg-sky-500 hover:bg-sky-600"
+                  >
+                    <UserPlus className="w-4 h-4 mr-2" />
+                    Crear cuenta gratis
+                  </Button>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Profile section */}
         <Card className="bg-white/70 backdrop-blur-sm border-white/50">
           <CardHeader>
@@ -289,14 +338,16 @@ export default function Settings() {
         </Card>
 
         {/* Logout */}
-        <Button
-          variant="outline"
-          onClick={handleLogout}
-          className="w-full rounded-xl border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
-        >
-          <LogOut className="w-4 h-4 mr-2" />
-          Cerrar sesión
-        </Button>
+        {user && (
+          <Button
+            variant="outline"
+            onClick={handleLogout}
+            className="w-full rounded-xl border-red-200 text-red-600 hover:bg-red-50 hover:text-red-700"
+          >
+            <LogOut className="w-4 h-4 mr-2" />
+            Cerrar sesión
+          </Button>
+        )}
 
       </main>
     </div>

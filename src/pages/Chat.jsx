@@ -52,29 +52,61 @@ export default function Chat() {
 
   const loadProfile = async () => {
     try {
-      const user = await base44.auth.me();
-      const profiles = await base44.entities.StudentProfile.filter({ created_by: user.email });
-      
-      if (profiles.length === 0 || !profiles[0].onboarding_completed) {
+      // Cargar perfil local primero
+      const localProfile = localStorage.getItem('sofia_profile');
+      let currentProfile = null;
+
+      if (localProfile) {
+        currentProfile = JSON.parse(localProfile);
+        if (!currentProfile.onboarding_completed) {
+          navigate(createPageUrl('Onboarding'));
+          return;
+        }
+        setProfile(currentProfile);
+      }
+
+      // Si está autenticado, cargar desde base de datos
+      const isAuth = await base44.auth.isAuthenticated();
+      if (isAuth) {
+        const user = await base44.auth.me();
+        const profiles = await base44.entities.StudentProfile.filter({ created_by: user.email });
+        
+        if (profiles.length > 0) {
+          currentProfile = profiles[0];
+          setProfile(currentProfile);
+          localStorage.setItem('sofia_profile', JSON.stringify(currentProfile));
+        }
+      } else if (!localProfile) {
         navigate(createPageUrl('Onboarding'));
         return;
       }
-      
-      setProfile(profiles[0]);
-      
-      // Welcome message
-      const greetings = [
-        `¡Hola ${profiles[0].display_name}! 🌟 ¿En qué te puedo ayudar hoy?`,
-        `¡${profiles[0].display_name}! 🎉 Me da gusto verte. ¿Qué vamos a aprender?`,
-        `¡Hey ${profiles[0].display_name}! ✨ Estoy listo para nuestra aventura de hoy.`
-      ];
-      
-      setMessages([{
-        role: 'assistant',
-        content: greetings[Math.floor(Math.random() * greetings.length)]
-      }]);
+
+      if (currentProfile) {
+        // Welcome message
+        const greetings = [
+          `¡Hola ${currentProfile.display_name}! 🌟 ¿En qué te puedo ayudar hoy?`,
+          `¡${currentProfile.display_name}! 🎉 Me da gusto verte. ¿Qué vamos a aprender?`,
+          `¡Hey ${currentProfile.display_name}! ✨ Estoy listo para nuestra aventura de hoy.`
+        ];
+        
+        setMessages([{
+          role: 'assistant',
+          content: greetings[Math.floor(Math.random() * greetings.length)]
+        }]);
+      }
     } catch (error) {
       console.error('Error loading profile:', error);
+      const localProfile = localStorage.getItem('sofia_profile');
+      if (localProfile) {
+        const parsed = JSON.parse(localProfile);
+        setProfile(parsed);
+        setMessages([{
+          role: 'assistant',
+          content: `¡Hola ${parsed.display_name}! 🌟 ¿En qué te puedo ayudar hoy?`
+        }]);
+      } else {
+        navigate(createPageUrl('Onboarding'));
+      }
     }
   };
 
