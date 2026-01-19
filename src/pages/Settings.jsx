@@ -23,6 +23,7 @@ export default function Settings() {
   const [parentCode, setParentCode] = useState(null);
   const [copied, setCopied] = useState(false);
   const [copiedParent, setCopiedParent] = useState(false);
+  const [autoPlayVoice, setAutoPlayVoice] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -35,6 +36,10 @@ export default function Settings() {
       if (localProfile) {
         setProfile(JSON.parse(localProfile));
       }
+
+      // Cargar preferencia de auto-play de voz
+      const voicePreference = localStorage.getItem('sofia_autoplay_voice');
+      setAutoPlayVoice(voicePreference === 'true');
 
       // Verificar autenticación
       const isAuth = await base44.auth.isAuthenticated();
@@ -154,6 +159,11 @@ export default function Settings() {
     setTimeout(() => setCopiedParent(false), 2000);
   };
 
+  const handleAutoPlayVoiceToggle = (checked) => {
+    setAutoPlayVoice(checked);
+    localStorage.setItem('sofia_autoplay_voice', checked.toString());
+  };
+
   const handleLogout = () => {
     base44.auth.logout();
   };
@@ -261,6 +271,23 @@ export default function Settings() {
               <Switch
                 checked={profile.strict_mode}
                 onCheckedChange={(checked) => updateProfile({ strict_mode: checked })}
+              />
+            </div>
+
+            <div className="flex items-center justify-between p-3 bg-slate-50 rounded-xl">
+              <div>
+                <p className="font-medium text-slate-700 flex items-center gap-2">
+                  <span className="text-lg">🔊</span> Lectura automática de voz
+                </p>
+                <p className="text-sm text-slate-500">
+                  {profile.grade && parseInt(profile.grade.split('_')[0]) <= 3 && profile.grade.includes('primaria')
+                    ? 'Recomendado para tu grado (ayuda a la comprensión)'
+                    : 'Las respuestas se leerán automáticamente'}
+                </p>
+              </div>
+              <Switch
+                checked={autoPlayVoice}
+                onCheckedChange={handleAutoPlayVoiceToggle}
               />
             </div>
 
