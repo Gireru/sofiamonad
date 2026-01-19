@@ -69,11 +69,14 @@ export default function Onboarding() {
         await base44.entities.StudentProfile.create(finalProfile);
       }
       
+      // Pequeña pausa para que se vea la transición
+      await new Promise(resolve => setTimeout(resolve, 500));
       navigate(createPageUrl('Dashboard'));
     } catch (error) {
       console.error('Error saving profile:', error);
+      alert('Hubo un error al guardar tu perfil. Por favor intenta de nuevo.');
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   const steps = [
