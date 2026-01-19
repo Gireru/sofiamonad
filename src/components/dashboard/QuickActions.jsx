@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { BookOpen, Palette, MessageCircle, Camera, Sparkles } from 'lucide-react';
+import { BookOpen, Palette, MessageCircle, Camera, ShoppingBag, Settings } from 'lucide-react';
 
 const actions = [
   {
@@ -40,12 +40,30 @@ const actions = [
     gradient: 'from-blue-400 to-cyan-500',
     page: 'Chat',
     params: '?mode=tutor'
+  },
+  {
+    id: 'shop',
+    icon: ShoppingBag,
+    label: 'Tienda',
+    description: 'Compra accesorios',
+    gradient: 'from-yellow-400 to-orange-500',
+    page: 'Shop',
+    params: ''
+  },
+  {
+    id: 'settings',
+    icon: Settings,
+    label: 'Configuración',
+    description: 'Ajusta tu perfil',
+    gradient: 'from-slate-400 to-slate-500',
+    page: 'Settings',
+    params: ''
   }
 ];
 
 export default function QuickActions() {
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
       {actions.map((action, i) => {
         const Icon = action.icon;
         return (
