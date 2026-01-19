@@ -126,7 +126,11 @@ export default function Dashboard() {
           </section>
 
           {/* Stats */}
-          <section className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <section>
+            <h2 className="text-lg font-bold text-slate-700 mb-4 flex items-center gap-2">
+              <span className="text-xl">📊</span> Seguimiento Académico
+            </h2>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <StatsCard 
               icon={Zap} 
               value={profile.xp_points || 0} 
@@ -155,6 +159,7 @@ export default function Dashboard() {
               gradient="from-green-400 to-emerald-500"
               delay={0.4}
             />
+            </div>
           </section>
 
           {/* Achievements */}
