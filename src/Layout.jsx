@@ -1,8 +1,28 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import SplashScreen from '@/components/splash/SplashScreen';
 
 export default function Layout({ children, currentPageName }) {
+  const [showSplash, setShowSplash] = useState(false);
+
+  useEffect(() => {
+    // Mostrar splash solo en la primera carga
+    const hasSeenSplash = sessionStorage.getItem('hasSeenSplash');
+    if (!hasSeenSplash) {
+      setShowSplash(true);
+    }
+  }, []);
+
+  const handleSplashComplete = () => {
+    sessionStorage.setItem('hasSeenSplash', 'true');
+    setShowSplash(false);
+  };
+
   // Pages that should NOT have the layout wrapper (full-screen experiences)
   const fullScreenPages = ['Onboarding', 'Chat', 'Dashboard', 'Settings', 'ParentDashboard', 'TeacherDashboard'];
+  
+  if (showSplash) {
+    return <SplashScreen onComplete={handleSplashComplete} />;
+  }
   
   if (fullScreenPages.includes(currentPageName)) {
     return <>{children}</>;
