@@ -41,9 +41,18 @@ export default function Chat() {
   const [isListening, setIsListening] = useState(false);
   const [currentMode, setCurrentMode] = useState('tutor');
   const [avatarState, setAvatarState] = useState('idle');
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const speechSynthRef = useRef(null);
 
   useEffect(() => {
     loadProfile();
+    
+    // Cleanup speech on unmount
+    return () => {
+      if (speechSynthRef.current) {
+        window.speechSynthesis.cancel();
+      }
+    };
   }, []);
 
   useEffect(() => {
@@ -222,7 +231,11 @@ Negative prompt: violence, scary, dark, photorealistic, adult content, weapons, 
           add_context_from_internet: currentMode === 'tutor'
         });
 
-        setMessages(prev => [...prev, { role: 'assistant', content: aiResponse }]);
+        const assistantMsg = { role: 'assistant', content: aiResponse };
+        setMessages(prev => [...prev, assistantMsg]);
+        
+        // Auto-reproducir respuesta con voz
+        setTimeout(() => speakMessage(aiResponse), 300);
       }
     } catch (error) {
       console.error('Error getting response:', error);
@@ -236,9 +249,90 @@ Negative prompt: violence, scary, dark, photorealistic, adult content, weapons, 
     setAvatarState('idle');
   };
 
+  const getVoiceConfig = () => {
+    if (!profile?.companion_name) return { pitch: 1, rate: 0.95 };
+    
+    const name = profile.companion_name.toLowerCase();
+    
+    // CASO A: Lia (VOICE_FEM_SOFT)
+    if (name === 'lia') {
+      return {
+        pitch: 1.2,        // Tono más alto (dulce)
+        rate: 0.9,         // Más pausado
+        voicePattern: 'female'
+      };
+    }
+    
+    // CASO B: Leo (VOICE_MASC_ENERGETIC)
+    if (name === 'leo') {
+      return {
+        pitch: 0.9,        // Tono más bajo (aventurero)
+        rate: 0.95,        // Energético pero claro
+        voicePattern: 'male'
+      };
+    }
+    
+    // CASO C (DEFAULT): Personalizado -> usar voz de Leo
+    return {
+      pitch: 0.9,
+      rate: 0.95,
+      voicePattern: 'male'
+    };
+  };
+
+  const speakMessage = (text) => {
+    // Cancelar cualquier voz previa
+    window.speechSynthesis.cancel();
+    
+    // Remover markdown y emojis para mejor pronunciación
+    const cleanText = text
+      .replace(/[*_~`#]/g, '')
+      .replace(/[🎨🎉✨🌟😅👋💡📚🚀⚡🔥]/g, '')
+      .replace(/\n/g, '. ');
+    
+    const utterance = new SpeechSynthesisUtterance(cleanText);
+    const config = getVoiceConfig();
+    
+    utterance.pitch = config.pitch;
+    utterance.rate = config.rate;
+    utterance.volume = 1;
+    utterance.lang = 'es-MX';
+    
+    // Intentar seleccionar voz específica
+    const voices = window.speechSynthesis.getVoices();
+    const preferredVoice = voices.find(voice => 
+      voice.lang.includes('es') && 
+      (config.voicePattern === 'female' ? voice.name.includes('female') || voice.name.includes('Mónica') || voice.name.includes('Paulina') : 
+       voice.name.includes('male') || voice.name.includes('Diego') || voice.name.includes('Juan'))
+    );
+    
+    if (preferredVoice) {
+      utterance.voice = preferredVoice;
+    }
+    
+    utterance.onstart = () => {
+      setIsSpeaking(true);
+      setAvatarState('talking');
+    };
+    
+    utterance.onend = () => {
+      setIsSpeaking(false);
+      setAvatarState('idle');
+    };
+    
+    speechSynthRef.current = utterance;
+    window.speechSynthesis.speak(utterance);
+  };
+
   const toggleVoice = () => {
-    setIsListening(!isListening);
-    setAvatarState(isListening ? 'idle' : 'listening');
+    if (isSpeaking) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+      setAvatarState('idle');
+    } else {
+      setIsListening(!isListening);
+      setAvatarState(isListening ? 'idle' : 'listening');
+    }
   };
 
   if (!profile) {
@@ -320,6 +414,7 @@ Negative prompt: violence, scary, dark, photorealistic, adult content, weapons, 
                 companionName={profile.companion_name}
                 userName={profile.display_name}
                 image={msg.image}
+                onSpeak={msg.role === 'assistant' ? speakMessage : null}
               />
             ))}
             

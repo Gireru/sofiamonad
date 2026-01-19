@@ -1,7 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
+import { Volume2 } from 'lucide-react';
 import Avatar3D from '../avatars/Avatar3D';
+import { Button } from '@/components/ui/button';
 
 export default function ChatMessage({ 
   message, 
