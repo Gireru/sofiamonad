@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import Avatar3D from '../avatars/Avatar3D';
+import VoiceButton, { HighlightedText } from './VoiceButton';
 
 export default function ChatMessage({ 
   message, 
@@ -9,8 +10,12 @@ export default function ChatMessage({
   avatarType = 'robot',
   companionName = 'Lia',
   userName = 'Tú',
-  image = null
+  image = null,
+  companionPersonality = 'lia',
+  autoPlayVoice = false
 }) {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentWordIndex, setCurrentWordIndex] = useState(-1);
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -30,9 +35,20 @@ export default function ChatMessage({
 
       {/* Message bubble */}
       <div className={`flex flex-col ${isUser ? 'items-end' : 'items-start'} max-w-[80%]`}>
-        <span className="text-xs text-slate-400 mb-1 px-2">
-          {isUser ? userName : companionName}
-        </span>
+        <div className="flex items-center gap-2 mb-1 px-2">
+          <span className="text-xs text-slate-400">
+            {isUser ? userName : companionName}
+          </span>
+          
+          {!isUser && (
+            <VoiceButton
+              text={message}
+              companionPersonality={companionPersonality}
+              autoPlay={autoPlayVoice}
+              onPlayingChange={(playing) => setIsPlaying(playing)}
+            />
+          )}
+        </div>
         
         <div className={`
           rounded-2xl px-4 py-3 shadow-sm

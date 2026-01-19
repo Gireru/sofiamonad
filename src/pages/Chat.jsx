@@ -41,6 +41,7 @@ export default function Chat() {
   const [isListening, setIsListening] = useState(false);
   const [currentMode, setCurrentMode] = useState('tutor');
   const [avatarState, setAvatarState] = useState('idle');
+  const [autoPlayVoice, setAutoPlayVoice] = useState(false);
 
   useEffect(() => {
     loadProfile();
@@ -82,6 +83,20 @@ export default function Chat() {
       }
 
       if (currentProfile) {
+        // Determinar auto-play según grado (Nivel 1: 1º-3º Primaria)
+        const gradeNumber = parseInt(currentProfile.grade?.split('_')[0] || '4');
+        const isPrimary = currentProfile.grade?.includes('primaria');
+        const shouldAutoPlay = gradeNumber >= 1 && gradeNumber <= 3 && isPrimary;
+        
+        // Verificar configuración del usuario (por defecto true para Nivel 1)
+        const userPreference = localStorage.getItem('sofia_autoplay_voice');
+        if (userPreference !== null) {
+          setAutoPlayVoice(userPreference === 'true');
+        } else {
+          setAutoPlayVoice(shouldAutoPlay);
+          localStorage.setItem('sofia_autoplay_voice', shouldAutoPlay.toString());
+        }
+
         // Welcome message
         const greetings = [
           `¡Hola ${currentProfile.display_name}! 🌟 ¿En qué te puedo ayudar hoy?`,
@@ -400,6 +415,8 @@ Negative prompt: violence, scary, dark, photorealistic, adult content, weapons, 
                 companionName={profile.companion_name}
                 userName={profile.display_name}
                 image={msg.image}
+                companionPersonality={profile.companion_personality}
+                autoPlayVoice={autoPlayVoice && msg.role === 'assistant' && i === messages.length - 1}
               />
             ))}
             
