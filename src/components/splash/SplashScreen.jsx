@@ -1,20 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, BookOpen, Atom, Pencil, Settings } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 
 export default function SplashScreen({ onComplete }) {
   const [phase, setPhase] = useState(1);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const timers = [
       setTimeout(() => setPhase(2), 1000),  // Fase 2: Construcción
       setTimeout(() => setPhase(3), 2500),  // Fase 3: Avatares
       setTimeout(() => setPhase(4), 3500),  // Fase 4: Asentamiento
-      setTimeout(() => onComplete(), 4000)  // Completar
+      setTimeout(() => {
+        onComplete();
+        navigate(createPageUrl('Home'));
+      }, 4000)  // Completar y redirigir a Home
     ];
 
     return () => timers.forEach(timer => clearTimeout(timer));
-  }, [onComplete]);
+  }, [onComplete, navigate]);
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden bg-gradient-to-br from-sky-100 via-pink-50 to-orange-100">
