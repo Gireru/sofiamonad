@@ -20,7 +20,9 @@ export default function Settings() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(false);
   const [tokenGenerated, setTokenGenerated] = useState(null);
+  const [parentCode, setParentCode] = useState(null);
   const [copied, setCopied] = useState(false);
+  const [copiedParent, setCopiedParent] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -34,6 +36,15 @@ export default function Settings() {
       const profiles = await base44.entities.StudentProfile.filter({ created_by: userData.email });
       if (profiles.length > 0) {
         setProfile(profiles[0]);
+        
+        // Cargar código de acceso para padres si existe
+        const access = await base44.entities.ParentAccess.filter({ 
+          student_id: profiles[0].id,
+          is_active: true 
+        });
+        if (access.length > 0) {
+          setParentCode(access[0].access_code);
+        }
       }
     } catch (error) {
       console.error('Error loading data:', error);
@@ -75,6 +86,27 @@ export default function Settings() {
     navigator.clipboard.writeText(tokenGenerated);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const generateParentCode = async () => {
+    const code = Math.random().toString(36).substring(2, 8).toUpperCase();
+
+    try {
+      await base44.entities.ParentAccess.create({
+        access_code: code,
+        student_id: profile.id,
+        is_active: true
+      });
+      setParentCode(code);
+    } catch (error) {
+      console.error('Error generating parent code:', error);
+    }
+  };
+
+  const copyParentCode = () => {
+    navigator.clipboard.writeText(parentCode);
+    setCopiedParent(true);
+    setTimeout(() => setCopiedParent(false), 2000);
   };
 
   const handleLogout = () => {
@@ -161,35 +193,68 @@ export default function Settings() {
               />
             </div>
 
-            <div className="border-t pt-4">
-              <h3 className="font-medium text-slate-700 mb-3">Invitar maestro</h3>
-              <p className="text-sm text-slate-500 mb-4">
-                Genera un código para que el maestro pueda ver el progreso del estudiante.
-              </p>
-              
-              {tokenGenerated ? (
-                <div className="flex items-center gap-2">
-                  <div className="flex-1 bg-green-50 border border-green-200 rounded-xl p-3 font-mono text-lg text-center text-green-700">
-                    {tokenGenerated}
+            <div className="space-y-4">
+              <div>
+                <h3 className="font-medium text-slate-700 mb-3">Código para padres</h3>
+                <p className="text-sm text-slate-500 mb-4">
+                  Comparte este código con tus padres para que vean tu progreso.
+                </p>
+                
+                {parentCode ? (
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1 bg-purple-50 border border-purple-200 rounded-xl p-3 font-mono text-lg text-center text-purple-700">
+                      {parentCode}
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={copyParentCode}
+                      className="rounded-xl"
+                    >
+                      {copiedParent ? <Check className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4" />}
+                    </Button>
                   </div>
+                ) : (
                   <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={copyToken}
-                    className="rounded-xl"
+                    onClick={generateParentCode}
+                    className="w-full rounded-xl bg-gradient-to-r from-purple-500 to-pink-500"
                   >
-                    {copied ? <Check className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4" />}
+                    <Key className="w-4 h-4 mr-2" />
+                    Generar código de acceso
                   </Button>
-                </div>
-              ) : (
-                <Button
-                  onClick={generateTeacherToken}
-                  className="w-full rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500"
-                >
-                  <Key className="w-4 h-4 mr-2" />
-                  Generar código de maestro
-                </Button>
-              )}
+                )}
+              </div>
+
+              <div className="border-t pt-4">
+                <h3 className="font-medium text-slate-700 mb-3">Invitar maestro</h3>
+                <p className="text-sm text-slate-500 mb-4">
+                  Genera un código para que el maestro pueda ver el progreso del estudiante.
+                </p>
+                
+                {tokenGenerated ? (
+                  <div className="flex items-center gap-2">
+                    <div className="flex-1 bg-green-50 border border-green-200 rounded-xl p-3 font-mono text-lg text-center text-green-700">
+                      {tokenGenerated}
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      onClick={copyToken}
+                      className="rounded-xl"
+                    >
+                      {copied ? <Check className="w-4 h-4 text-green-600" /> : <Copy className="w-4 h-4" />}
+                    </Button>
+                  </div>
+                ) : (
+                  <Button
+                    onClick={generateTeacherToken}
+                    className="w-full rounded-xl bg-gradient-to-r from-sky-500 to-indigo-500"
+                  >
+                    <Key className="w-4 h-4 mr-2" />
+                    Generar código de maestro
+                  </Button>
+                )}
+              </div>
             </div>
           </CardContent>
         </Card>

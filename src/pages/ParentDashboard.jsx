@@ -27,7 +27,23 @@ export default function ParentDashboard() {
   const loadData = async () => {
     try {
       const user = await base44.auth.me();
-      const profiles = await base44.entities.StudentProfile.filter({ created_by: user.email });
+      
+      // Verificar si es padre con acceso
+      const parentAccess = await base44.entities.ParentAccess.filter({ 
+        parent_email: user.email,
+        is_active: true 
+      });
+      
+      if (parentAccess.length === 0) {
+        // No tiene acceso, redirigir a login de padres
+        navigate(createPageUrl('ParentLogin'));
+        return;
+      }
+      
+      // Obtener perfil del estudiante vinculado
+      const profiles = await base44.entities.StudentProfile.filter({ 
+        id: parentAccess[0].student_id 
+      });
       
       if (profiles.length > 0) {
         setProfile(profiles[0]);
@@ -46,6 +62,7 @@ export default function ParentDashboard() {
       }
     } catch (error) {
       console.error('Error loading data:', error);
+      navigate(createPageUrl('ParentLogin'));
     }
   };
 
