@@ -3,6 +3,7 @@ import Chat from './pages/Chat';
 import Dashboard from './pages/Dashboard';
 import Settings from './pages/Settings';
 import ParentDashboard from './pages/ParentDashboard';
+import TeacherDashboard from './pages/TeacherDashboard';
 
 
 export const PAGES = {
@@ -11,6 +12,7 @@ export const PAGES = {
     "Dashboard": Dashboard,
     "Settings": Settings,
     "ParentDashboard": ParentDashboard,
+    "TeacherDashboard": TeacherDashboard,
 }
 
 export const pagesConfig = {
