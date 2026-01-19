@@ -117,6 +117,14 @@ export default function Dashboard() {
             </div>
           </motion.section>
 
+          {/* Quick actions */}
+          <section>
+            <h2 className="text-lg font-bold text-slate-700 mb-4 flex items-center gap-2">
+              <span className="text-xl">🚀</span> Acciones rápidas
+            </h2>
+            <QuickActions />
+          </section>
+
           {/* Stats */}
           <section className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <StatsCard 
@@ -147,14 +155,6 @@ export default function Dashboard() {
               gradient="from-green-400 to-emerald-500"
               delay={0.4}
             />
-          </section>
-
-          {/* Quick actions */}
-          <section>
-            <h2 className="text-lg font-bold text-slate-700 mb-4 flex items-center gap-2">
-              <span className="text-xl">🚀</span> Acciones rápidas
-            </h2>
-            <QuickActions />
           </section>
 
           {/* Achievements */}
