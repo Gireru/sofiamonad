@@ -72,43 +72,32 @@ export default function VoiceButton({
       // Si no hay voz personalizada o no se encuentra, usar la lógica por defecto
       if (!selectedVoice) {
         if (useFemaleVoice) {
-          // VOICE_FEM_SOFT: Buscar voces femeninas de alta calidad en español
+          // VOICE_FEM_SOFT: Lia usa Google Español de Estados Unidos
           selectedVoice = voices.find(voice => 
-            voice.lang.includes('es') && 
-            voice.name.toLowerCase().includes('monica')
+            voice.name.toLowerCase().includes('google') && 
+            voice.lang.includes('es-US')
           ) || voices.find(voice => 
-            voice.lang.includes('es') && 
-            voice.name.toLowerCase().includes('paulina')
+            voice.name.toLowerCase().includes('google') && 
+            voice.lang.includes('es')
           ) || voices.find(voice => 
-            voice.lang.includes('es-MX') && 
+            voice.lang.includes('es-US') && 
             voice.name.toLowerCase().includes('female')
           ) || voices.find(voice => 
             voice.lang.includes('es') && 
             voice.name.toLowerCase().includes('female')
-          ) || voices.find(voice => 
-            voice.lang.includes('es') && 
-            voice.name.toLowerCase().includes('mujer')
-          ) || voices.find(voice => voice.lang.includes('es-MX'))
-            || voices.find(voice => voice.lang.includes('es'));
+          ) || voices.find(voice => voice.lang.includes('es'));
         } else {
-          // VOICE_MASC_ENERGETIC: Buscar voces masculinas de alta calidad en español
+          // VOICE_MASC_ENERGETIC: Leo y nombres personalizados usan Google Español
           selectedVoice = voices.find(voice => 
-            voice.lang.includes('es') && 
-            voice.name.toLowerCase().includes('diego')
+            voice.name.toLowerCase().includes('google') && 
+            (voice.lang.includes('es-ES') || voice.lang.includes('es-MX'))
           ) || voices.find(voice => 
-            voice.lang.includes('es') && 
-            voice.name.toLowerCase().includes('jorge')
-          ) || voices.find(voice => 
-            voice.lang.includes('es-MX') && 
-            voice.name.toLowerCase().includes('male')
+            voice.name.toLowerCase().includes('google') && 
+            voice.lang.includes('es')
           ) || voices.find(voice => 
             voice.lang.includes('es') && 
             voice.name.toLowerCase().includes('male')
-          ) || voices.find(voice => 
-            voice.lang.includes('es') && 
-            voice.name.toLowerCase().includes('hombre')
-          ) || voices.find(voice => voice.lang.includes('es-MX'))
-            || voices.find(voice => voice.lang.includes('es'));
+          ) || voices.find(voice => voice.lang.includes('es'));
         }
       }
 
