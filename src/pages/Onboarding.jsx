@@ -32,21 +32,29 @@ export default function Onboarding() {
 
   const checkExistingProfile = async () => {
     try {
-      const isAuth = await base44.auth.isAuthenticated();
-      if (!isAuth) {
-        base44.auth.redirectToLogin(window.location.href);
-        return;
+      // Verificar si hay perfil local
+      const localProfile = localStorage.getItem('sofia_profile');
+      if (localProfile) {
+        const parsed = JSON.parse(localProfile);
+        if (parsed.onboarding_completed) {
+          navigate(createPageUrl('Dashboard'));
+          return;
+        }
       }
 
-      const user = await base44.auth.me();
-      if (user?.full_name) {
-        setUserName(user.full_name.split(' ')[0]);
-        setProfile(prev => ({ ...prev, display_name: user.full_name.split(' ')[0] }));
-      }
-      
-      const profiles = await base44.entities.StudentProfile.filter({ created_by: user.email });
-      if (profiles.length > 0 && profiles[0].onboarding_completed) {
-        navigate(createPageUrl('Dashboard'));
+      // Si está autenticado, verificar perfil en base de datos
+      const isAuth = await base44.auth.isAuthenticated();
+      if (isAuth) {
+        const user = await base44.auth.me();
+        if (user?.full_name) {
+          setUserName(user.full_name.split(' ')[0]);
+          setProfile(prev => ({ ...prev, display_name: user.full_name.split(' ')[0] }));
+        }
+        
+        const profiles = await base44.entities.StudentProfile.filter({ created_by: user.email });
+        if (profiles.length > 0 && profiles[0].onboarding_completed) {
+          navigate(createPageUrl('Dashboard'));
+        }
       }
     } catch (error) {
       console.log('Error checking profile:', error);
@@ -58,15 +66,6 @@ export default function Onboarding() {
     
     setLoading(true);
     try {
-      const isAuth = await base44.auth.isAuthenticated();
-      if (!isAuth) {
-        base44.auth.redirectToLogin(window.location.href);
-        return;
-      }
-
-      const user = await base44.auth.me();
-      const profiles = await base44.entities.StudentProfile.filter({ created_by: user.email });
-      
       const finalProfile = {
         display_name: profile.display_name || userName || 'Estudiante',
         avatar_type: profile.avatar_type,
@@ -80,10 +79,20 @@ export default function Onboarding() {
         achievements: ['first_login']
       };
 
-      if (profiles.length > 0) {
-        await base44.entities.StudentProfile.update(profiles[0].id, finalProfile);
-      } else {
-        await base44.entities.StudentProfile.create(finalProfile);
+      // Guardar localmente
+      localStorage.setItem('sofia_profile', JSON.stringify(finalProfile));
+
+      // Si está autenticado, también guardar en la base de datos
+      const isAuth = await base44.auth.isAuthenticated();
+      if (isAuth) {
+        const user = await base44.auth.me();
+        const profiles = await base44.entities.StudentProfile.filter({ created_by: user.email });
+        
+        if (profiles.length > 0) {
+          await base44.entities.StudentProfile.update(profiles[0].id, finalProfile);
+        } else {
+          await base44.entities.StudentProfile.create(finalProfile);
+        }
       }
       
       navigate(createPageUrl('Dashboard'));
