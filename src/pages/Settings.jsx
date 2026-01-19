@@ -87,6 +87,16 @@ export default function Settings() {
   };
 
   const generateTeacherToken = async () => {
+    if (!user) {
+      alert('Necesitas crear una cuenta para compartir códigos con maestros');
+      return;
+    }
+    
+    if (!profile.id) {
+      alert('Primero crea una cuenta para generar códigos');
+      return;
+    }
+
     const token = Math.random().toString(36).substring(2, 8).toUpperCase();
     const expiresAt = new Date();
     expiresAt.setDate(expiresAt.getDate() + 7);
@@ -102,6 +112,7 @@ export default function Settings() {
       setTokenGenerated(token);
     } catch (error) {
       console.error('Error generating token:', error);
+      alert('Error al generar código. Intenta de nuevo.');
     }
   };
 
@@ -112,6 +123,16 @@ export default function Settings() {
   };
 
   const generateParentCode = async () => {
+    if (!user) {
+      alert('Necesitas crear una cuenta para compartir códigos con padres');
+      return;
+    }
+    
+    if (!profile.id) {
+      alert('Primero crea una cuenta para generar códigos');
+      return;
+    }
+
     const code = Math.random().toString(36).substring(2, 8).toUpperCase();
 
     try {
@@ -123,6 +144,7 @@ export default function Settings() {
       setParentCode(code);
     } catch (error) {
       console.error('Error generating parent code:', error);
+      alert('Error al generar código. Intenta de nuevo.');
     }
   };
 
