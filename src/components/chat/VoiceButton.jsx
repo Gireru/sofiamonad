@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 export default function VoiceButton({ 
   text, 
   companionPersonality = 'lia',
+  companionName = 'Lia',
   onPlayingChange,
   autoPlay = false 
 }) {
@@ -39,23 +40,39 @@ export default function VoiceButton({
       const utterance = new SpeechSynthesisUtterance(text);
       utteranceRef.current = utterance;
 
-      // Configurar voz según personalidad
+      // Configurar voz según nombre del compañero
+      // CASO A: Si nombre es "Lia" → voz femenina
+      // CASO B: Si nombre es "Leo" → voz masculina
+      // CASO C (DEFAULT): Cualquier otro nombre personalizado → voz de Leo (masculina energética)
       const voices = window.speechSynthesis.getVoices();
       let selectedVoice = null;
+      let useFemaleVoice = false;
 
-      if (companionPersonality === 'lia' || companionPersonality === 'custom') {
-        // Buscar voz femenina en español
+      // Determinar si usar voz femenina o masculina
+      if (companionName === 'Lia') {
+        useFemaleVoice = true;
+      } else {
+        // Leo o cualquier nombre personalizado → voz masculina (default)
+        useFemaleVoice = false;
+      }
+
+      if (useFemaleVoice) {
+        // VOICE_FEM_SOFT: Buscar voz femenina en español (Tono dulce, pausado, estilo narradora)
         selectedVoice = voices.find(voice => 
           voice.lang.includes('es') && voice.name.toLowerCase().includes('female')
         ) || voices.find(voice => 
           voice.lang.includes('es') && voice.name.toLowerCase().includes('mujer')
+        ) || voices.find(voice => 
+          voice.lang.includes('es') && voice.name.toLowerCase().includes('paulina')
         ) || voices.find(voice => voice.lang.includes('es'));
       } else {
-        // Buscar voz masculina en español para Leo
+        // VOICE_MASC_ENERGETIC: Buscar voz masculina en español (Tono aventurero, seguro, amigable)
         selectedVoice = voices.find(voice => 
           voice.lang.includes('es') && voice.name.toLowerCase().includes('male')
         ) || voices.find(voice => 
           voice.lang.includes('es') && voice.name.toLowerCase().includes('hombre')
+        ) || voices.find(voice => 
+          voice.lang.includes('es') && voice.name.toLowerCase().includes('jorge')
         ) || voices.find(voice => voice.lang.includes('es'));
       }
 
@@ -63,9 +80,10 @@ export default function VoiceButton({
         utterance.voice = selectedVoice;
       }
 
-      // Velocidad según especificación (0.9x para mejor comprensión)
-      utterance.rate = 0.9;
-      utterance.pitch = companionPersonality === 'lia' ? 1.1 : 1.0;
+      // Velocidad: 0.95x (ligeramente más lento para mejorar dicción en palabras educativas)
+      utterance.rate = 0.95;
+      // Entonación: alta variabilidad para evitar tono monótono
+      utterance.pitch = useFemaleVoice ? 1.1 : 1.0;
       utterance.volume = 1;
 
       // Eventos

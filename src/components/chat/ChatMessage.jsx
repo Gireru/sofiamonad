@@ -44,6 +44,7 @@ export default function ChatMessage({
             <VoiceButton
               text={message}
               companionPersonality={companionPersonality}
+              companionName={companionName}
               autoPlay={autoPlayVoice}
               onPlayingChange={(playing) => setIsPlaying(playing)}
             />
