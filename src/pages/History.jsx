@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowLeft, BookOpen, Palette, MessageCircle, Trash2, Calendar } from 'lucide-react';
+import { ArrowLeft, BookOpen, Palette, MessageCircle, Trash2, Calendar, Play } from 'lucide-react';
 import { toast } from 'sonner';
 
 const modeIcons = {
@@ -182,14 +182,26 @@ export default function History() {
                         </div>
 
                         {/* Actions */}
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleDelete(conv.id)}
-                          className="rounded-full text-red-500 hover:text-red-700 hover:bg-red-50"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="outline"
+                            size="icon"
+                            onClick={() => navigate(createPageUrl('Chat') + `?conversationId=${conv.id}`)}
+                            className="rounded-full text-sky-600 hover:text-sky-700 hover:bg-sky-50"
+                            title="Continuar conversación"
+                          >
+                            <Play className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => handleDelete(conv.id)}
+                            className="rounded-full text-red-500 hover:text-red-700 hover:bg-red-50"
+                            title="Eliminar"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
                       </div>
                     </CardContent>
                   </Card>

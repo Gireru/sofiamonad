@@ -54,14 +54,13 @@ export default function Chat() {
 
   useEffect(() => {
     loadProfile();
-    
-    // Detectar modo desde URL
-    const params = new URLSearchParams(window.location.search);
-    const modeParam = params.get('mode');
-    if (modeParam && modes[modeParam]) {
-      setCurrentMode(modeParam);
-    }
   }, []);
+
+  useEffect(() => {
+    if (profile) {
+      loadConversationFromURL();
+    }
+  }, [profile]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -422,6 +421,32 @@ Negative prompt: violence, scary, dark, photorealistic, adult content, weapons, 
     } catch (error) {
       console.error('Error saving:', error);
       toast.error(`Error: ${error.message || 'No se pudo guardar'}`);
+    }
+  };
+
+  const loadConversationFromURL = async () => {
+    const params = new URLSearchParams(window.location.search);
+    const conversationId = params.get('conversationId');
+    const modeParam = params.get('mode');
+    
+    if (modeParam && modes[modeParam]) {
+      setCurrentMode(modeParam);
+    }
+    
+    if (conversationId) {
+      try {
+        const conversations = await base44.entities.Conversation.filter({ id: conversationId });
+        if (conversations.length > 0) {
+          const conv = conversations[0];
+          setCurrentConversationId(conv.id);
+          setMessages(conv.messages || []);
+          setCurrentMode(conv.mode || 'tutor');
+          toast.success('Conversación cargada ✓');
+        }
+      } catch (error) {
+        console.error('Error loading conversation:', error);
+        toast.error('No se pudo cargar la conversación');
+      }
     }
   };
 
