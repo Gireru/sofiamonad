@@ -164,64 +164,12 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-50 via-indigo-50 to-purple-50 relative overflow-hidden">
-      {/* Animated background elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <motion.div
-          animate={{ 
-            y: [0, -30, 0],
-            x: [0, 20, 0],
-            rotate: [0, 10, 0]
-          }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute top-20 left-10 w-64 h-64 bg-gradient-to-br from-yellow-300/20 to-orange-300/20 rounded-full blur-3xl"
-        />
-        <motion.div
-          animate={{ 
-            y: [0, 30, 0],
-            x: [0, -20, 0]
-          }}
-          transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-br from-pink-300/20 to-purple-300/20 rounded-full blur-3xl"
-        />
-        <motion.div
-          animate={{ 
-            scale: [1, 1.3, 1],
-            opacity: [0.2, 0.4, 0.2]
-          }}
-          transition={{ duration: 6, repeat: Infinity }}
-          className="absolute top-1/3 left-1/3 w-96 h-96 bg-gradient-to-br from-green-300/15 to-teal-300/15 rounded-full blur-3xl"
-        />
-        <motion.div
-          animate={{ 
-            y: [0, -40, 0],
-            rotate: [0, -15, 0]
-          }}
-          transition={{ duration: 9, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute bottom-40 left-40 w-72 h-72 bg-gradient-to-br from-blue-300/15 to-indigo-300/15 rounded-full blur-3xl"
-        />
+      {/* Static background elements - optimized for mobile */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-20 left-10 w-64 h-64 bg-gradient-to-br from-yellow-300/20 to-orange-300/20 rounded-full blur-3xl" />
+        <div className="absolute bottom-20 right-20 w-80 h-80 bg-gradient-to-br from-pink-300/20 to-purple-300/20 rounded-full blur-3xl" />
+        <div className="absolute top-1/3 left-1/3 w-96 h-96 bg-gradient-to-br from-green-300/15 to-teal-300/15 rounded-full blur-3xl" />
       </div>
-      
-      {/* Floating particles */}
-      {[...Array(15)].map((_, i) => (
-        <motion.div
-          key={i}
-          className="absolute w-2 h-2 bg-white/40 rounded-full"
-          style={{
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
-          }}
-          animate={{
-            y: [0, -100, 0],
-            opacity: [0, 1, 0],
-            scale: [0, 1.5, 0],
-          }}
-          transition={{
-            duration: 3 + Math.random() * 2,
-            repeat: Infinity,
-            delay: Math.random() * 3,
-          }}
-        />
-      ))}
 
       {/* Main content */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-6">
@@ -233,25 +181,11 @@ export default function Home() {
           transition={{ duration: 1 }}
           className="text-center mb-12"
         >
-          {/* Floating Logo with particles */}
+          {/* Floating Logo - optimized */}
           <motion.div className="relative inline-block mb-8">
-            {/* Central glowing orb */}
             <motion.div
-              animate={{
-                scale: [1, 1.2, 1],
-                rotate: [0, 180, 360],
-              }}
-              transition={{
-                duration: 4,
-                repeat: Infinity,
-                ease: "easeInOut"
-              }}
-              className="absolute inset-0 bg-gradient-to-br from-sky-300 via-purple-300 to-pink-300 rounded-full blur-3xl opacity-40"
-            />
-            
-            <motion.div
-              initial={{ scale: 0, rotate: -180 }}
-              animate={{ scale: 1, rotate: 0 }}
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
               transition={{ 
                 type: "spring", 
                 stiffness: 100, 
@@ -262,21 +196,12 @@ export default function Home() {
             >
               {profile && inventory ? (
                 <div className="relative w-32 h-32 mx-auto">
-                  <motion.div
-                    animate={{ y: [0, -10, 0] }}
-                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                  >
-                    <Avatar3D type={profile.avatar_type} size="xl" state="idle" />
-                  </motion.div>
+                  <Avatar3D type={profile.avatar_type} size="xl" state="idle" />
                   
                   {inventory.equipped_items?.hat && (
-                    <motion.div 
-                      className="absolute -top-2 left-1/2 -translate-x-1/2 text-4xl"
-                      animate={{ rotate: [-5, 5, -5] }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                    >
+                    <div className="absolute -top-2 left-1/2 -translate-x-1/2 text-4xl">
                       {getItemEmoji(inventory.equipped_items.hat)}
-                    </motion.div>
+                    </div>
                   )}
                   {inventory.equipped_items?.glasses && (
                     <div className="absolute top-1/3 left-1/2 -translate-x-1/2 text-3xl">
@@ -285,63 +210,11 @@ export default function Home() {
                   )}
                 </div>
               ) : (
-                <motion.div
-                  animate={{ y: [0, -10, 0] }}
-                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                  className="w-32 h-32 bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-2xl relative overflow-hidden"
-                >
-                  {/* Inner glow effect */}
-                  <motion.div
-                    animate={{
-                      scale: [1, 1.5, 1],
-                      opacity: [0.3, 0.6, 0.3],
-                    }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                    className="absolute inset-0 bg-white rounded-full"
-                  />
-                  
-                  <motion.span 
-                    className="text-6xl relative z-10"
-                    animate={{ 
-                      rotate: [0, 360],
-                      scale: [1, 1.2, 1]
-                    }}
-                    transition={{ 
-                      rotate: { duration: 8, repeat: Infinity, ease: "linear" },
-                      scale: { duration: 3, repeat: Infinity }
-                    }}
-                  >
-                    ✨
-                  </motion.span>
-                </motion.div>
+                <div className="w-32 h-32 bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-2xl">
+                  <span className="text-6xl">✨</span>
+                </div>
               )}
             </motion.div>
-            
-            {/* Orbiting elements */}
-            {[0, 60, 120, 180, 240, 300].map((angle, i) => (
-              <motion.div
-                key={i}
-                className="absolute"
-                initial={{ opacity: 0, scale: 0 }}
-                animate={{
-                  opacity: [0, 1, 0],
-                  scale: [0, 1, 0],
-                  x: Math.cos((angle + i * 60) * Math.PI / 180) * 80,
-                  y: Math.sin((angle + i * 60) * Math.PI / 180) * 80,
-                }}
-                transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                  delay: i * 0.2,
-                }}
-                style={{
-                  left: '50%',
-                  top: '50%',
-                }}
-              >
-                <div className="w-3 h-3 bg-gradient-to-br from-yellow-300 to-orange-400 rounded-full shadow-lg" />
-              </motion.div>
-            ))}
           </motion.div>
           
           {/* Title with split animation */}
@@ -374,21 +247,12 @@ export default function Home() {
             transition={{ delay: 0.7, duration: 0.6 }}
             className="space-y-2"
           >
-            <motion.p 
-              className="text-2xl md:text-3xl font-bold text-slate-800"
-              animate={{ scale: [1, 1.02, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
-            >
+            <p className="text-2xl md:text-3xl font-bold text-slate-800">
               Tu compañero inteligente de estudio
-            </motion.p>
-            <motion.p 
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1 }}
-              className="text-lg text-slate-500 font-medium"
-            >
+            </p>
+            <p className="text-lg text-slate-500 font-medium">
               Aprende de forma divertida y personalizada 🚀
-            </motion.p>
+            </p>
           </motion.div>
         </motion.div>
 
@@ -401,36 +265,16 @@ export default function Home() {
         >
           <motion.button
             onClick={() => navigate(createPageUrl('Chat') + '?mode=guest')}
-            className="relative group"
+            className="relative"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            {/* Animated RGB glow */}
-            <motion.div
-              className="absolute -inset-1 rounded-2xl blur-xl opacity-75"
-              animate={{
-                background: [
-                  'linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3)',
-                  'linear-gradient(90deg, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3, #ff0000)',
-                  'linear-gradient(135deg, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3, #ff0000, #ff7f00)',
-                  'linear-gradient(180deg, #00ff00, #0000ff, #4b0082, #9400d3, #ff0000, #ff7f00, #ffff00)',
-                  'linear-gradient(225deg, #0000ff, #4b0082, #9400d3, #ff0000, #ff7f00, #ffff00, #00ff00)',
-                  'linear-gradient(270deg, #4b0082, #9400d3, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff)',
-                  'linear-gradient(315deg, #9400d3, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082)',
-                  'linear-gradient(360deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3)',
-                ],
-              }}
-              transition={{
-                duration: 3,
-                repeat: Infinity,
-                ease: "linear"
-              }}
-            />
-            
-            <div className="relative bg-white rounded-2xl px-8 py-4 flex items-center gap-3 shadow-2xl border-2 border-white/50">
-              <p className="text-xl font-black bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500">
-                Empezar a chatear
-              </p>
+            <div className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 rounded-2xl p-0.5">
+              <div className="bg-white rounded-2xl px-8 py-4 flex items-center gap-3">
+                <p className="text-xl font-black bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500">
+                  Empezar a chatear
+                </p>
+              </div>
             </div>
           </motion.button>
         </motion.div>
@@ -450,66 +294,25 @@ export default function Home() {
                   type: "spring",
                   stiffness: 100
                 }}
-                whileHover={{ 
-                  scale: 1.06,
-                  y: -12,
-                  transition: { duration: 0.3 }
-                }}
-                whileTap={{ scale: 0.96 }}
+                whileHover={{ scale: 1.03, y: -8 }}
+                whileTap={{ scale: 0.97 }}
                 onClick={() => handleRoleSelection(role.id)}
                 className="group relative"
               >
-                {/* Animated glow effect */}
-                <motion.div 
-                  className={`absolute -inset-1 bg-gradient-to-br ${role.gradient} rounded-[2rem] blur-2xl opacity-0 group-hover:opacity-70 transition-all duration-500`}
-                  animate={{
-                    scale: [1, 1.05, 1],
-                  }}
-                  transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    delay: index * 0.5,
-                  }}
-                />
+                {/* Static glow effect */}
+                <div className={`absolute -inset-1 bg-gradient-to-br ${role.gradient} rounded-[2rem] blur-2xl opacity-0 group-hover:opacity-60 transition-opacity duration-300`} />
                 
                 {/* Card content */}
                 <div className={`relative bg-gradient-to-br ${role.cardBg} backdrop-blur-xl rounded-[2rem] p-8 shadow-2xl border-2 border-white/60 group-hover:border-white/90 transition-all duration-500 overflow-hidden`}>
                   {/* Top shine effect */}
                   <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/80 to-transparent" />
                   
-                  {/* Icon container with floating animation */}
-                  <motion.div
-                    animate={{ 
-                      y: [0, -8, 0],
-                    }}
-                    transition={{ 
-                      duration: 3, 
-                      repeat: Infinity,
-                      ease: "easeInOut",
-                      delay: index * 0.4
-                    }}
-                    className="relative mb-6"
-                  >
-                    {/* Icon glow */}
-                    <div className={`absolute inset-0 bg-gradient-to-br ${role.gradient} rounded-2xl blur-xl opacity-50 scale-110`} />
-                    
-                    <div className={`relative w-24 h-24 mx-auto bg-gradient-to-br ${role.gradient} rounded-2xl flex items-center justify-center shadow-2xl ${role.glow} border-4 border-white/40`}>
-                      <motion.span 
-                        className="text-5xl"
-                        animate={{ 
-                          rotate: [0, 8, -8, 0],
-                          scale: [1, 1.1, 1]
-                        }}
-                        transition={{ 
-                          duration: 4, 
-                          repeat: Infinity,
-                          delay: index * 0.3
-                        }}
-                      >
-                        {role.emoji}
-                      </motion.span>
+                  {/* Icon container - optimized */}
+                  <div className="relative mb-6">
+                    <div className={`w-24 h-24 mx-auto bg-gradient-to-br ${role.gradient} rounded-2xl flex items-center justify-center shadow-2xl border-4 border-white/40`}>
+                      <span className="text-5xl">{role.emoji}</span>
                     </div>
-                  </motion.div>
+                  </div>
 
                   {/* Title */}
                   <h3 className="text-2xl font-black text-slate-800 mb-2 tracking-tight">
@@ -527,26 +330,10 @@ export default function Home() {
                   </p>
 
                   {/* Action button */}
-                  <motion.div
-                    className={`flex items-center justify-center gap-2 font-bold text-${role.accentColor}-600 bg-white/60 rounded-xl py-3 px-4 group-hover:bg-white/90 transition-all duration-300`}
-                    whileHover={{
-                      x: [0, 3, 0],
-                      transition: { duration: 0.5, repeat: Infinity }
-                    }}
-                  >
+                  <div className={`flex items-center justify-center gap-2 font-bold text-${role.accentColor}-600 bg-white/60 rounded-xl py-3 px-4 group-hover:bg-white/90 transition-all duration-300`}>
                     <span>Entrar</span>
-                    <motion.span
-                      animate={{ x: [0, 4, 0] }}
-                      transition={{ 
-                        duration: 1.2, 
-                        repeat: Infinity,
-                        delay: index * 0.2
-                      }}
-                      className="text-xl"
-                    >
-                      →
-                    </motion.span>
-                  </motion.div>
+                    <span className="text-xl">→</span>
+                  </div>
 
                   {/* Corner decoration */}
                   <div className="absolute top-4 right-4 w-2 h-2 rounded-full bg-white/50" />
@@ -564,21 +351,12 @@ export default function Home() {
           transition={{ delay: 1.2 }}
           className="mt-16 text-center"
         >
-          <motion.div
-            animate={{ 
-              opacity: [0.5, 1, 0.5],
-            }}
-            transition={{
-              duration: 3,
-              repeat: Infinity,
-            }}
-            className="inline-flex items-center gap-2 bg-white/60 backdrop-blur-md px-6 py-3 rounded-full border border-white/80 shadow-lg"
-          >
+          <div className="inline-flex items-center gap-2 bg-white/60 backdrop-blur-md px-6 py-3 rounded-full border border-white/80 shadow-lg">
             <span className="text-2xl">✨</span>
             <p className="text-sm font-medium text-slate-600">
               Compañero inteligente de estudio para primaria y secundaria
             </p>
-          </motion.div>
+          </div>
         </motion.div>
       </div>
     </div>
