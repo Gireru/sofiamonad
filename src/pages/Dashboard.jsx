@@ -54,36 +54,34 @@ export default function Dashboard() {
 
   const loadProfile = async () => {
     try {
-      // Intentar cargar perfil local primero
-      const localProfile = localStorage.getItem('sofia_profile');
-      
-      if (localProfile) {
-        const parsed = JSON.parse(localProfile);
-        if (!parsed.onboarding_completed) {
-          navigate(createPageUrl('Onboarding'));
-          return;
-        }
-        setProfile(parsed);
-      }
-
-      // Si está autenticado, cargar desde base de datos
       const isAuth = await base44.auth.isAuthenticated();
+      
       if (isAuth) {
         const user = await base44.auth.me();
         const profiles = await base44.entities.StudentProfile.filter({ created_by: user.email });
         
         if (profiles.length > 0) {
           setProfile(profiles[0]);
-          // Actualizar también el local
           localStorage.setItem('sofia_profile', JSON.stringify(profiles[0]));
+        } else {
+          navigate(createPageUrl('Onboarding'));
         }
-      } else if (!localProfile) {
-        // No hay perfil local ni autenticación
-        navigate(createPageUrl('Onboarding'));
+      } else {
+        // Si no está autenticado, usar perfil local
+        const localProfile = localStorage.getItem('sofia_profile');
+        if (localProfile) {
+          const parsed = JSON.parse(localProfile);
+          if (!parsed.onboarding_completed) {
+            navigate(createPageUrl('Onboarding'));
+            return;
+          }
+          setProfile(parsed);
+        } else {
+          navigate(createPageUrl('Onboarding'));
+        }
       }
     } catch (error) {
       console.error('Error loading profile:', error);
-      // Intentar cargar local si falla
       const localProfile = localStorage.getItem('sofia_profile');
       if (localProfile) {
         setProfile(JSON.parse(localProfile));
