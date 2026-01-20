@@ -338,6 +338,69 @@ export default function Home() {
           </motion.div>
         </motion.div>
 
+        {/* Guest Trial Button */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 1, duration: 0.6 }}
+          className="mb-8"
+        >
+          <motion.button
+            onClick={() => navigate(createPageUrl('Chat') + '?mode=guest')}
+            className="relative group"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            {/* Animated RGB glow */}
+            <motion.div
+              className="absolute -inset-1 rounded-2xl blur-xl opacity-75"
+              animate={{
+                background: [
+                  'linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3)',
+                  'linear-gradient(90deg, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3, #ff0000)',
+                  'linear-gradient(135deg, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3, #ff0000, #ff7f00)',
+                  'linear-gradient(180deg, #00ff00, #0000ff, #4b0082, #9400d3, #ff0000, #ff7f00, #ffff00)',
+                  'linear-gradient(225deg, #0000ff, #4b0082, #9400d3, #ff0000, #ff7f00, #ffff00, #00ff00)',
+                  'linear-gradient(270deg, #4b0082, #9400d3, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff)',
+                  'linear-gradient(315deg, #9400d3, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082)',
+                  'linear-gradient(360deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3)',
+                ],
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                ease: "linear"
+              }}
+            />
+            
+            <div className="relative bg-white rounded-2xl px-8 py-4 flex items-center gap-3 shadow-2xl border-2 border-white/50">
+              <motion.span
+                className="text-3xl"
+                animate={{ 
+                  rotate: [0, 15, -15, 0],
+                  scale: [1, 1.2, 1]
+                }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                🎮
+              </motion.span>
+              <div className="text-left">
+                <p className="text-xl font-black bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500">
+                  ¡Prueba Gratis!
+                </p>
+                <p className="text-xs text-slate-500 font-medium">3 preguntas sin registro</p>
+              </div>
+              <motion.span
+                animate={{ x: [0, 5, 0] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+                className="text-2xl"
+              >
+                ✨
+              </motion.span>
+            </div>
+          </motion.button>
+        </motion.div>
+
         {/* Role Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl w-full px-4">
           {roles.map((role, index) => {
