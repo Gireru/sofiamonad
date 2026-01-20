@@ -315,7 +315,6 @@ export default function Home() {
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.3, duration: 0.6 }}
-            className="text-center"
           >
             <h1 className="text-6xl md:text-7xl font-black mb-4 tracking-tight text-center">
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 drop-shadow-sm">
@@ -327,6 +326,7 @@ export default function Home() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
+              className="text-center"
             >
               <p className="text-2xl md:text-3xl font-bold text-slate-800 mb-3">
                 ¿Quién eres hoy?
