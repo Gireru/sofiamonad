@@ -181,11 +181,25 @@ export default function Home() {
           transition={{ duration: 1 }}
           className="text-center mb-12"
         >
-          {/* Floating Logo - optimized */}
+          {/* Floating Logo */}
           <motion.div className="relative inline-block mb-8">
+            {/* Central glowing orb */}
             <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
+              animate={{
+                scale: [1, 1.2, 1],
+                opacity: [0.3, 0.5, 0.3],
+              }}
+              transition={{
+                duration: 4,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              className="absolute inset-0 bg-gradient-to-br from-sky-300 via-purple-300 to-pink-300 rounded-full blur-3xl"
+            />
+            
+            <motion.div
+              initial={{ scale: 0, rotate: -180 }}
+              animate={{ scale: 1, rotate: 0 }}
               transition={{ 
                 type: "spring", 
                 stiffness: 100, 
@@ -196,7 +210,12 @@ export default function Home() {
             >
               {profile && inventory ? (
                 <div className="relative w-32 h-32 mx-auto">
-                  <Avatar3D type={profile.avatar_type} size="xl" state="idle" />
+                  <motion.div
+                    animate={{ y: [0, -10, 0] }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                  >
+                    <Avatar3D type={profile.avatar_type} size="xl" state="idle" />
+                  </motion.div>
                   
                   {inventory.equipped_items?.hat && (
                     <div className="absolute -top-2 left-1/2 -translate-x-1/2 text-4xl">
@@ -210,9 +229,32 @@ export default function Home() {
                   )}
                 </div>
               ) : (
-                <div className="w-32 h-32 bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-2xl">
-                  <span className="text-6xl">✨</span>
-                </div>
+                <motion.div
+                  animate={{ y: [0, -10, 0] }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                  className="w-32 h-32 bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-2xl relative overflow-hidden"
+                >
+                  <motion.div
+                    animate={{
+                      scale: [1, 1.5, 1],
+                      opacity: [0.3, 0.6, 0.3],
+                    }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                    className="absolute inset-0 bg-white rounded-full"
+                  />
+                  
+                  <motion.span 
+                    className="text-6xl relative z-10"
+                    animate={{ 
+                      rotate: [0, 360],
+                    }}
+                    transition={{ 
+                      rotate: { duration: 8, repeat: Infinity, ease: "linear" },
+                    }}
+                  >
+                    ✨
+                  </motion.span>
+                </motion.div>
               )}
             </motion.div>
           </motion.div>
@@ -265,16 +307,36 @@ export default function Home() {
         >
           <motion.button
             onClick={() => navigate(createPageUrl('Chat') + '?mode=guest')}
-            className="relative"
+            className="relative group"
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
           >
-            <div className="bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 rounded-2xl p-0.5">
-              <div className="bg-white rounded-2xl px-8 py-4 flex items-center gap-3">
-                <p className="text-xl font-black bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500">
-                  Empezar a chatear
-                </p>
-              </div>
+            {/* Animated RGB glow */}
+            <motion.div
+              className="absolute -inset-1 rounded-2xl blur-xl opacity-75"
+              animate={{
+                background: [
+                  'linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3)',
+                  'linear-gradient(90deg, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3, #ff0000)',
+                  'linear-gradient(135deg, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3, #ff0000, #ff7f00)',
+                  'linear-gradient(180deg, #00ff00, #0000ff, #4b0082, #9400d3, #ff0000, #ff7f00, #ffff00)',
+                  'linear-gradient(225deg, #0000ff, #4b0082, #9400d3, #ff0000, #ff7f00, #ffff00, #00ff00)',
+                  'linear-gradient(270deg, #4b0082, #9400d3, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff)',
+                  'linear-gradient(315deg, #9400d3, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082)',
+                  'linear-gradient(360deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #9400d3)',
+                ],
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                ease: "linear"
+              }}
+            />
+            
+            <div className="relative bg-white rounded-2xl px-8 py-4 flex items-center gap-3 shadow-2xl border-2 border-white/50">
+              <p className="text-xl font-black bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500">
+                Empezar a chatear
+              </p>
             </div>
           </motion.button>
         </motion.div>
