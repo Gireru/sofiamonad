@@ -18,7 +18,7 @@ export default function Layout({ children, currentPageName }) {
   };
 
   // Pages that should NOT have the layout wrapper (full-screen experiences)
-  const fullScreenPages = ['Home', 'Onboarding', 'Chat', 'Dashboard', 'Settings', 'ParentDashboard', 'TeacherDashboard', 'ParentLogin'];
+  const fullScreenPages = ['Home', 'Onboarding', 'Chat', 'Dashboard', 'Settings', 'ParentDashboard', 'TeacherDashboard', 'ParentLogin', 'TeacherLogin'];
   
   if (showSplash) {
     return <SplashScreen onComplete={handleSplashComplete} />;

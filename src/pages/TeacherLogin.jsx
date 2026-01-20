@@ -5,9 +5,9 @@ import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Shield, LogIn, AlertCircle } from 'lucide-react';
+import { BookOpen, LogIn, AlertCircle } from 'lucide-react';
 
-export default function ParentLogin() {
+export default function TeacherLogin() {
   const navigate = useNavigate();
   const [code, setCode] = useState('');
   const [loading, setLoading] = useState(false);
@@ -19,45 +19,53 @@ export default function ParentLogin() {
     setError('');
 
     try {
-      // Verificar autenticación
-      const isAuth = await base44.auth.isAuthenticated();
-      if (!isAuth) {
-        setError('Debes iniciar sesión primero');
-        setLoading(false);
-        return;
-      }
-
       const user = await base44.auth.me();
       
-      // Buscar código de acceso
-      const access = await base44.entities.ParentAccess.filter({ 
-        access_code: code.toUpperCase(),
-        is_active: true 
+      // Buscar token de maestro
+      const tokens = await base44.entities.TeacherToken.filter({ 
+        token_code: code.toUpperCase()
       });
 
-      if (access.length === 0) {
-        setError('Código inválido o expirado');
+      if (tokens.length === 0) {
+        setError('Código inválido');
         setLoading(false);
         return;
       }
 
-      // Vincular padre con estudiante
-      await base44.entities.ParentAccess.update(access[0].id, {
-        parent_email: user.email
+      const token = tokens[0];
+
+      // Verificar si ya fue usado
+      if (token.is_used) {
+        setError('Este código ya fue usado');
+        setLoading(false);
+        return;
+      }
+
+      // Verificar expiración
+      if (new Date(token.expires_at) < new Date()) {
+        setError('Este código ha expirado');
+        setLoading(false);
+        return;
+      }
+
+      // Vincular maestro con estudiante
+      await base44.entities.TeacherToken.update(token.id, {
+        teacher_email: user.email,
+        is_used: true
       });
 
-      // Redirigir al dashboard de padres
-      navigate(createPageUrl('ParentDashboard'));
+      // Redirigir al dashboard de maestros
+      navigate(createPageUrl('TeacherDashboard'));
     } catch (error) {
       console.error('Error:', error);
-      setError('Error al validar el código. Asegúrate de haber iniciado sesión.');
+      setError('Error al validar el código');
     }
 
     setLoading(false);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100 flex items-center justify-center p-6">
+    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-indigo-50 to-blue-100 flex items-center justify-center p-6">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -65,16 +73,16 @@ export default function ParentLogin() {
       >
         <div className="bg-white/70 backdrop-blur-lg rounded-3xl p-8 shadow-xl border border-white/50">
           {/* Icon */}
-          <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-indigo-400 to-purple-500 rounded-full flex items-center justify-center shadow-lg shadow-indigo-500/30">
-            <Shield className="w-10 h-10 text-white" />
+          <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-purple-400 to-indigo-500 rounded-full flex items-center justify-center shadow-lg shadow-purple-500/30">
+            <BookOpen className="w-10 h-10 text-white" />
           </div>
 
           {/* Title */}
           <h1 className="text-2xl font-bold text-center text-slate-800 mb-2">
-            Acceso para Padres
+            Acceso para Maestros
           </h1>
           <p className="text-center text-slate-600 mb-8">
-            Ingresa el código que tu hijo/a te compartió
+            Ingresa el código que te compartió el padre/tutor
           </p>
 
           {/* Form */}
@@ -86,7 +94,7 @@ export default function ParentLogin() {
                 onChange={(e) => setCode(e.target.value.toUpperCase())}
                 placeholder="Código de 6 caracteres"
                 maxLength={6}
-                className="text-center text-2xl font-mono tracking-wider rounded-2xl border-2 border-indigo-200 focus:border-indigo-400"
+                className="text-center text-2xl font-mono tracking-wider rounded-2xl border-2 border-purple-200 focus:border-purple-400"
                 required
               />
             </div>
@@ -105,7 +113,7 @@ export default function ParentLogin() {
             <Button
               type="submit"
               disabled={loading || code.length !== 6}
-              className="w-full rounded-2xl py-6 text-lg bg-gradient-to-r from-indigo-500 to-purple-500 hover:from-indigo-600 hover:to-purple-600 shadow-lg shadow-indigo-500/30"
+              className="w-full rounded-2xl py-6 text-lg bg-gradient-to-r from-purple-500 to-indigo-500 hover:from-purple-600 hover:to-indigo-600 shadow-lg shadow-purple-500/30"
             >
               {loading ? (
                 <motion.div
@@ -125,7 +133,7 @@ export default function ParentLogin() {
           {/* Help text */}
           <div className="mt-6 text-center text-sm text-slate-500">
             <p>¿No tienes un código?</p>
-            <p>Pídele a tu hijo/a que lo genere en Configuración</p>
+            <p>Solicítalo al padre/tutor del estudiante</p>
           </div>
         </div>
       </motion.div>
