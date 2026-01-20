@@ -4,13 +4,17 @@ import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { Backpack, Shield, BookOpen, Sparkles } from 'lucide-react';
+import Avatar3D from '@/components/avatars/Avatar3D';
 
 export default function Home() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [profile, setProfile] = useState(null);
+  const [inventory, setInventory] = useState(null);
 
   useEffect(() => {
     checkExistingSession();
+    loadProfileAndInventory();
   }, []);
 
   const checkExistingSession = async () => {
@@ -40,6 +44,41 @@ export default function Home() {
       console.log('No existing session:', error);
     }
     setLoading(false);
+  };
+
+  const loadProfileAndInventory = async () => {
+    try {
+      const isAuth = await base44.auth.isAuthenticated();
+      if (isAuth) {
+        const user = await base44.auth.me();
+        const profiles = await base44.entities.StudentProfile.filter({ created_by: user.email });
+        
+        if (profiles.length > 0) {
+          setProfile(profiles[0]);
+          
+          const inventories = await base44.entities.StudentInventory.filter({ 
+            student_id: profiles[0].id 
+          });
+          
+          if (inventories.length > 0) {
+            setInventory(inventories[0]);
+          }
+        }
+      }
+    } catch (error) {
+      console.log('Could not load profile/inventory:', error);
+    }
+  };
+
+  const getItemEmoji = (itemId) => {
+    const SHOP_CATALOG = [
+      { item_id: 'hat_wizard', emoji: '🎩' },
+      { item_id: 'hat_graduation', emoji: '🎓' },
+      { item_id: 'hat_crown', emoji: '👑' },
+      { item_id: 'glasses_cool', emoji: '😎' },
+      { item_id: 'glasses_nerd', emoji: '🤓' },
+    ];
+    return SHOP_CATALOG.find(i => i.item_id === itemId)?.emoji || '';
   };
 
   const handleRoleSelection = async (role) => {
@@ -204,14 +243,34 @@ export default function Home() {
             {/* Glow effect behind logo */}
             <div className="absolute inset-0 bg-gradient-to-br from-sky-400 to-indigo-600 rounded-3xl blur-2xl opacity-40 scale-110" />
             
-            <div className="relative w-28 h-28 mx-auto bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600 rounded-3xl flex items-center justify-center shadow-2xl shadow-blue-500/40">
-              <motion.span 
-                className="text-6xl"
-                animate={{ rotate: [0, 10, -10, 0] }}
-                transition={{ duration: 4, repeat: Infinity }}
-              >
-                ✨
-              </motion.span>
+            <div className="relative w-28 h-28 mx-auto">
+              {profile && inventory ? (
+                <div className="relative">
+                  <Avatar3D type={profile.avatar_type} size="xl" state="idle" />
+                  
+                  {inventory.equipped_items?.hat && (
+                    <div className="absolute -top-2 left-1/2 -translate-x-1/2 text-4xl">
+                      {getItemEmoji(inventory.equipped_items.hat)}
+                    </div>
+                  )}
+                  {inventory.equipped_items?.glasses && (
+                    <div className="absolute top-1/3 left-1/2 -translate-x-1/2 text-3xl">
+                      {getItemEmoji(inventory.equipped_items.glasses)}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="w-28 h-28 bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600 rounded-3xl flex items-center justify-center shadow-2xl shadow-blue-500/40">
+                  <motion.span 
+                    className="text-6xl"
+                    animate={{ rotate: [0, 10, -10, 0] }}
+                    transition={{ duration: 4, repeat: Infinity }}
+                  >
+                    ✨
+                  </motion.span>
+                </div>
+              )}
+            </div>
               
               {/* Orbiting sparkles */}
               {[0, 120, 240].map((angle, i) => (
