@@ -223,9 +223,9 @@ export default function SplashScreen({ onComplete }) {
             initial={{ y: -50, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.5 }}
-            className="absolute top-8 sm:top-12 left-1/2 -translate-x-1/2"
+            className="absolute top-8 sm:top-12 left-1/2 -translate-x-1/2 flex justify-center"
           >
-            <div className="flex items-center gap-2 sm:gap-3">
+            <div className="flex items-center justify-center gap-2 sm:gap-3">
               <motion.div
                 animate={{ rotate: [0, 360] }}
                 transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
