@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { useNavigate, Link } from 'react-router-dom';
@@ -21,14 +21,27 @@ export default function Dashboard() {
   const [copiedParent, setCopiedParent] = useState(false);
   const [copiedTeacher, setCopiedTeacher] = useState(false);
 
-  const updateGreeting = useCallback(() => {
+  useEffect(() => {
+    loadProfile();
+    updateGreeting();
+    
+    // Verificar si hay códigos de bienvenida para mostrar
+    const codes = localStorage.getItem('sofia_welcome_codes');
+    if (codes) {
+      setWelcomeCodes(JSON.parse(codes));
+      setShowCodesModal(true);
+      localStorage.removeItem('sofia_welcome_codes');
+    }
+  }, []);
+
+  const updateGreeting = () => {
     const hour = new Date().getHours();
     if (hour < 12) setGreeting('¡Buenos días');
     else if (hour < 18) setGreeting('¡Buenas tardes');
     else setGreeting('¡Buenas noches');
-  }, []);
+  };
 
-  const copyCode = useCallback((code, type) => {
+  const copyCode = (code, type) => {
     navigator.clipboard.writeText(code);
     if (type === 'parent') {
       setCopiedParent(true);
@@ -37,9 +50,9 @@ export default function Dashboard() {
       setCopiedTeacher(true);
       setTimeout(() => setCopiedTeacher(false), 2000);
     }
-  }, []);
+  };
 
-  const loadProfile = useCallback(async () => {
+  const loadProfile = async () => {
     try {
       // Intentar cargar perfil local primero
       const localProfile = localStorage.getItem('sofia_profile');
@@ -78,27 +91,7 @@ export default function Dashboard() {
         navigate(createPageUrl('Onboarding'));
       }
     }
-  }, [navigate]);
-
-  useEffect(() => {
-    loadProfile();
-    updateGreeting();
-    
-    // Verificar si hay códigos de bienvenida para mostrar
-    const codes = localStorage.getItem('sofia_welcome_codes');
-    if (codes) {
-      setWelcomeCodes(JSON.parse(codes));
-      setShowCodesModal(true);
-      localStorage.removeItem('sofia_welcome_codes');
-    }
-  }, [loadProfile, updateGreeting]);
-
-  const statsData = useMemo(() => [
-    { icon: Zap, value: profile?.xp_points || 0, label: "XP puntos", gradient: "from-yellow-400 to-orange-500", delay: 0.1 },
-    { icon: Clock, value: `${profile?.total_minutes || 0}m`, label: "Tiempo total", gradient: "from-blue-400 to-cyan-500", delay: 0.2 },
-    { icon: Star, value: profile?.total_sessions || 0, label: "Sesiones", gradient: "from-purple-400 to-pink-500", delay: 0.3 },
-    { icon: Trophy, value: profile?.achievements?.length || 1, label: "Logros", gradient: "from-green-400 to-emerald-500", delay: 0.4 }
-  ], [profile]);
+  };
 
   if (!profile) {
     return (
@@ -122,12 +115,12 @@ export default function Dashboard() {
       {/* Header */}
       <header className="relative z-10 px-6 py-4">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <Link to={createPageUrl('Home')} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+          <div className="flex items-center gap-2">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-400 to-indigo-500 flex items-center justify-center shadow-lg">
               <span className="text-xl">✨</span>
             </div>
             <span className="font-bold text-xl text-slate-800">Sofia</span>
-          </Link>
+          </div>
           
           <Link to={createPageUrl('Settings')}>
             <Button variant="ghost" size="icon" className="rounded-full">
@@ -187,11 +180,36 @@ export default function Dashboard() {
               <span className="text-xl">📊</span> Seguimiento Académico
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-              {statsData.map((stat, i) => (
-                <StatsCard key={i} {...stat} />
-              ))}
+            <StatsCard 
+              icon={Zap} 
+              value={profile.xp_points || 0} 
+              label="XP puntos" 
+              gradient="from-yellow-400 to-orange-500"
+              delay={0.1}
+            />
+            <StatsCard 
+              icon={Clock} 
+              value={`${profile.total_minutes || 0}m`} 
+              label="Tiempo total" 
+              gradient="from-blue-400 to-cyan-500"
+              delay={0.2}
+            />
+            <StatsCard 
+              icon={Star} 
+              value={profile.total_sessions || 0} 
+              label="Sesiones" 
+              gradient="from-purple-400 to-pink-500"
+              delay={0.3}
+            />
+            <StatsCard 
+              icon={Trophy} 
+              value={profile.achievements?.length || 1} 
+              label="Logros" 
+              gradient="from-green-400 to-emerald-500"
+              delay={0.4}
+            />
             </div>
-            </section>
+          </section>
 
           {/* Achievements */}
           <section className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/50">

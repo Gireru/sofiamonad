@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 
 const avatarConfigs = {
@@ -34,40 +34,40 @@ const avatarConfigs = {
   }
 };
 
-const sizeClasses = {
-  sm: 'w-12 h-12 text-2xl',
-  md: 'w-20 h-20 text-4xl',
-  lg: 'w-32 h-32 text-6xl',
-  xl: 'w-40 h-40 text-7xl'
-};
-
-const stateAnimations = {
-  idle: {
-    y: [0, -5, 0],
-    transition: { duration: 2, repeat: Infinity, ease: "easeInOut" }
-  },
-  listening: {
-    scale: [1, 1.1, 1],
-    rotate: [-5, 5, -5],
-    transition: { duration: 0.5, repeat: Infinity }
-  },
-  thinking: {
-    rotate: [0, -10, 10, 0],
-    transition: { duration: 1, repeat: Infinity }
-  },
-  talking: {
-    scale: [1, 1.05, 1],
-    transition: { duration: 0.3, repeat: Infinity }
-  }
-};
-
-const Avatar3D = React.memo(function Avatar3D({ 
+export default function Avatar3D({ 
   type = 'robot', 
   size = 'md', 
   state = 'idle', 
   className = '' 
 }) {
-  const config = useMemo(() => avatarConfigs[type] || avatarConfigs.robot, [type]);
+  const config = avatarConfigs[type] || avatarConfigs.robot;
+  
+  const sizeClasses = {
+    sm: 'w-12 h-12 text-2xl',
+    md: 'w-20 h-20 text-4xl',
+    lg: 'w-32 h-32 text-6xl',
+    xl: 'w-40 h-40 text-7xl'
+  };
+
+  const stateAnimations = {
+    idle: {
+      y: [0, -5, 0],
+      transition: { duration: 2, repeat: Infinity, ease: "easeInOut" }
+    },
+    listening: {
+      scale: [1, 1.1, 1],
+      rotate: [-5, 5, -5],
+      transition: { duration: 0.5, repeat: Infinity }
+    },
+    thinking: {
+      rotate: [0, -10, 10, 0],
+      transition: { duration: 1, repeat: Infinity }
+    },
+    talking: {
+      scale: [1, 1.05, 1],
+      transition: { duration: 0.3, repeat: Infinity }
+    }
+  };
 
   return (
     <motion.div
@@ -132,7 +132,6 @@ const Avatar3D = React.memo(function Avatar3D({
       </div>
     </motion.div>
   );
-});
+}
 
-export default Avatar3D;
 export { avatarConfigs };

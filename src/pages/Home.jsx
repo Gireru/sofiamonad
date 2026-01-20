@@ -14,7 +14,31 @@ export default function Home() {
   }, []);
 
   const checkExistingSession = async () => {
-    // Solo mostrar la pantalla, no hacer redirección automática
+    try {
+      // Verificar si hay perfil local
+      const localProfile = localStorage.getItem('sofia_profile');
+      if (localProfile) {
+        const parsed = JSON.parse(localProfile);
+        if (parsed.onboarding_completed) {
+          navigate(createPageUrl('Dashboard'));
+          return;
+        }
+      }
+
+      // Si está autenticado, verificar perfil en base de datos
+      const isAuth = await base44.auth.isAuthenticated();
+      if (isAuth) {
+        const user = await base44.auth.me();
+        const profiles = await base44.entities.StudentProfile.filter({ created_by: user.email });
+        
+        if (profiles.length > 0 && profiles[0].onboarding_completed) {
+          navigate(createPageUrl('Dashboard'));
+          return;
+        }
+      }
+    } catch (error) {
+      console.log('No existing session:', error);
+    }
     setLoading(false);
   };
 
@@ -48,7 +72,7 @@ export default function Home() {
     );
   }
 
-  const roles = React.useMemo(() => [
+  const roles = [
     {
       id: 'student',
       title: 'Soy Estudiante',
@@ -85,7 +109,7 @@ export default function Home() {
       emoji: '📚',
       accentColor: 'purple'
     }
-  ], []);
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-50 via-indigo-50 to-purple-50 relative overflow-hidden">

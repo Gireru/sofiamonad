@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import Avatar3D from '../avatars/Avatar3D';
 
-const ThinkingIndicator = React.memo(function ThinkingIndicator({ 
+export default function ThinkingIndicator({ 
   avatarType = 'robot', 
   companionName = 'Lia' 
 }) {
@@ -81,6 +81,4 @@ const ThinkingIndicator = React.memo(function ThinkingIndicator({
       </div>
     </motion.div>
   );
-});
-
-export default ThinkingIndicator;
+}

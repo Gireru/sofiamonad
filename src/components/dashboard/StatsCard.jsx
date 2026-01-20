@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-const StatsCard = React.memo(function StatsCard({ 
+export default function StatsCard({ 
   icon: Icon, 
   value, 
   label, 
@@ -23,6 +23,4 @@ const StatsCard = React.memo(function StatsCard({
       <p className="text-sm text-slate-500">{label}</p>
     </motion.div>
   );
-});
-
-export default StatsCard;
+}
