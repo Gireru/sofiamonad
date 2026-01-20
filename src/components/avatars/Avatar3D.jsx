@@ -132,6 +132,7 @@ const Avatar3D = React.memo(function Avatar3D({
       </div>
     </motion.div>
   );
-}
+});
 
+export default Avatar3D;
 export { avatarConfigs };
