@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { useNavigate, Link } from 'react-router-dom';
@@ -21,27 +21,14 @@ export default function Dashboard() {
   const [copiedParent, setCopiedParent] = useState(false);
   const [copiedTeacher, setCopiedTeacher] = useState(false);
 
-  useEffect(() => {
-    loadProfile();
-    updateGreeting();
-    
-    // Verificar si hay códigos de bienvenida para mostrar
-    const codes = localStorage.getItem('sofia_welcome_codes');
-    if (codes) {
-      setWelcomeCodes(JSON.parse(codes));
-      setShowCodesModal(true);
-      localStorage.removeItem('sofia_welcome_codes');
-    }
-  }, []);
-
-  const updateGreeting = () => {
+  const updateGreeting = useCallback(() => {
     const hour = new Date().getHours();
     if (hour < 12) setGreeting('¡Buenos días');
     else if (hour < 18) setGreeting('¡Buenas tardes');
     else setGreeting('¡Buenas noches');
-  };
+  }, []);
 
-  const copyCode = (code, type) => {
+  const copyCode = useCallback((code, type) => {
     navigator.clipboard.writeText(code);
     if (type === 'parent') {
       setCopiedParent(true);
@@ -50,9 +37,9 @@ export default function Dashboard() {
       setCopiedTeacher(true);
       setTimeout(() => setCopiedTeacher(false), 2000);
     }
-  };
+  }, []);
 
-  const loadProfile = async () => {
+  const loadProfile = useCallback(async () => {
     try {
       // Intentar cargar perfil local primero
       const localProfile = localStorage.getItem('sofia_profile');
@@ -180,36 +167,11 @@ export default function Dashboard() {
               <span className="text-xl">📊</span> Seguimiento Académico
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <StatsCard 
-              icon={Zap} 
-              value={profile.xp_points || 0} 
-              label="XP puntos" 
-              gradient="from-yellow-400 to-orange-500"
-              delay={0.1}
-            />
-            <StatsCard 
-              icon={Clock} 
-              value={`${profile.total_minutes || 0}m`} 
-              label="Tiempo total" 
-              gradient="from-blue-400 to-cyan-500"
-              delay={0.2}
-            />
-            <StatsCard 
-              icon={Star} 
-              value={profile.total_sessions || 0} 
-              label="Sesiones" 
-              gradient="from-purple-400 to-pink-500"
-              delay={0.3}
-            />
-            <StatsCard 
-              icon={Trophy} 
-              value={profile.achievements?.length || 1} 
-              label="Logros" 
-              gradient="from-green-400 to-emerald-500"
-              delay={0.4}
-            />
+              {statsData.map((stat, i) => (
+                <StatsCard key={i} {...stat} />
+              ))}
             </div>
-          </section>
+            </section>
 
           {/* Achievements */}
           <section className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/50">

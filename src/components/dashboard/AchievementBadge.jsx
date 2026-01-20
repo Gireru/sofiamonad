@@ -1,6 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
+const sizeClasses = {
+  sm: 'w-10 h-10 text-lg',
+  md: 'w-14 h-14 text-2xl',
+  lg: 'w-20 h-20 text-4xl'
+};
+
 const achievements = {
   first_login: {
     emoji: '🌟',
@@ -34,16 +40,10 @@ const achievements = {
   }
 };
 
-export default function AchievementBadge({ achievementId, size = 'md', showLabel = true }) {
+const AchievementBadge = React.memo(function AchievementBadge({ achievementId, size = 'md', showLabel = true }) {
   const achievement = achievements[achievementId];
   
   if (!achievement) return null;
-
-  const sizeClasses = {
-    sm: 'w-10 h-10 text-lg',
-    md: 'w-14 h-14 text-2xl',
-    lg: 'w-20 h-20 text-4xl'
-  };
 
   return (
     <motion.div
@@ -62,6 +62,8 @@ export default function AchievementBadge({ achievementId, size = 'md', showLabel
       )}
     </motion.div>
   );
-}
+});
+
+export default AchievementBadge;
 
 export { achievements };

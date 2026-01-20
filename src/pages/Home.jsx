@@ -109,7 +109,7 @@ export default function Home() {
       emoji: '📚',
       accentColor: 'purple'
     }
-  ];
+  ], []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-50 via-indigo-50 to-purple-50 relative overflow-hidden">
