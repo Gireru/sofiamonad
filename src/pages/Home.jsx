@@ -42,21 +42,33 @@ export default function Home() {
     setLoading(false);
   };
 
-  const handleRoleSelection = (role) => {
-    switch (role) {
-      case 'student':
-        navigate(createPageUrl('Onboarding'));
-        break;
-      case 'parent':
-        // Limpiar cualquier sesión de estudiante antes de ir al panel de padre
-        localStorage.removeItem('sofia_profile');
+  const handleRoleSelection = async (role) => {
+    if (role === 'student') {
+      navigate(createPageUrl('Onboarding'));
+    } else if (role === 'parent') {
+      // Limpiar sesión de estudiante si existe
+      localStorage.removeItem('sofia_profile');
+      
+      // Verificar si está autenticado
+      const isAuth = await base44.auth.isAuthenticated();
+      if (!isAuth) {
+        // Redirigir a login y volver después
+        base44.auth.redirectToLogin(createPageUrl('ParentLogin'));
+      } else {
         navigate(createPageUrl('ParentLogin'));
-        break;
-      case 'teacher':
-        // Limpiar cualquier sesión de estudiante antes de ir al panel de maestro
-        localStorage.removeItem('sofia_profile');
-        navigate(createPageUrl('TeacherDashboard'));
-        break;
+      }
+    } else if (role === 'teacher') {
+      // Limpiar sesión de estudiante si existe
+      localStorage.removeItem('sofia_profile');
+      
+      // Verificar si está autenticado
+      const isAuth = await base44.auth.isAuthenticated();
+      if (!isAuth) {
+        // Redirigir a login y volver después
+        base44.auth.redirectToLogin(createPageUrl('TeacherLogin'));
+      } else {
+        navigate(createPageUrl('TeacherLogin'));
+      }
     }
   };
 
