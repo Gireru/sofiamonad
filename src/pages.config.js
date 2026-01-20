@@ -1,6 +1,7 @@
 import Chat from './pages/Chat';
 import Dashboard from './pages/Dashboard';
 import History from './pages/History';
+import Home from './pages/Home';
 import Onboarding from './pages/Onboarding';
 import ParentDashboard from './pages/ParentDashboard';
 import ParentHistory from './pages/ParentHistory';
@@ -9,7 +10,6 @@ import Settings from './pages/Settings';
 import Shop from './pages/Shop';
 import TeacherDashboard from './pages/TeacherDashboard';
 import TeacherLogin from './pages/TeacherLogin';
-import Home from './pages/Home';
 import __Layout from './Layout.jsx';
 
 
@@ -17,6 +17,7 @@ export const PAGES = {
     "Chat": Chat,
     "Dashboard": Dashboard,
     "History": History,
+    "Home": Home,
     "Onboarding": Onboarding,
     "ParentDashboard": ParentDashboard,
     "ParentHistory": ParentHistory,
@@ -25,7 +26,6 @@ export const PAGES = {
     "Shop": Shop,
     "TeacherDashboard": TeacherDashboard,
     "TeacherLogin": TeacherLogin,
-    "Home": Home,
 }
 
 export const pagesConfig = {

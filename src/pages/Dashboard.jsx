@@ -179,55 +179,7 @@ export default function Dashboard() {
             <QuickActions studentGrade={profile.grade} />
           </section>
 
-          {/* Stats */}
-          <section>
-            <h2 className="text-lg font-bold text-slate-700 mb-4 flex items-center gap-2">
-              <span className="text-xl">📊</span> Seguimiento Académico
-            </h2>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <StatsCard 
-              icon={Zap} 
-              value={profile.xp_points || 0} 
-              label="XP puntos" 
-              gradient="from-yellow-400 to-orange-500"
-              delay={0.1}
-            />
-            <StatsCard 
-              icon={Clock} 
-              value={`${profile.total_minutes || 0}m`} 
-              label="Tiempo total" 
-              gradient="from-blue-400 to-cyan-500"
-              delay={0.2}
-            />
-            <StatsCard 
-              icon={Star} 
-              value={profile.total_sessions || 0} 
-              label="Sesiones" 
-              gradient="from-purple-400 to-pink-500"
-              delay={0.3}
-            />
-            <StatsCard 
-              icon={Trophy} 
-              value={profile.achievements?.length || 1} 
-              label="Logros" 
-              gradient="from-green-400 to-emerald-500"
-              delay={0.4}
-            />
-            </div>
-          </section>
 
-          {/* Achievements */}
-          <section className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/50">
-            <h2 className="text-lg font-bold text-slate-700 mb-4 flex items-center gap-2">
-              <span className="text-xl">🏆</span> Tus logros
-            </h2>
-            
-            <div className="flex flex-wrap gap-6">
-              {(profile.achievements || ['first_login']).map((achievement) => (
-                <AchievementBadge key={achievement} achievementId={achievement} />
-              ))}
-            </div>
-          </section>
 
           {/* Tip of the day */}
           <motion.section
