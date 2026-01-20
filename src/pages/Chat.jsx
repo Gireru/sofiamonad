@@ -392,12 +392,29 @@ Negative prompt: violence, scary, dark, photorealistic, adult content, weapons, 
     try {
       const isAuth = await base44.auth.isAuthenticated();
       if (!isAuth) {
-        toast.error('Debes iniciar sesión para guardar conversaciones');
+        toast.error('Debes crear una cuenta para guardar conversaciones', {
+          description: 'Haz clic aquí para crear tu cuenta',
+          action: {
+            label: 'Crear cuenta',
+            onClick: () => base44.auth.redirectToLogin(window.location.href)
+          }
+        });
         return;
       }
 
+      // Verificar que tengamos el ID del perfil en base de datos
       if (!profile?.id) {
-        toast.error('Error: No se encontró el perfil');
+        // Recargar perfil de la base de datos
+        const user = await base44.auth.me();
+        const profiles = await base44.entities.StudentProfile.filter({ created_by: user.email });
+        
+        if (profiles.length === 0) {
+          toast.error('No se encontró tu perfil. Intenta recargar la página.');
+          return;
+        }
+        
+        setProfile(profiles[0]);
+        toast.info('Reintenta guardar ahora');
         return;
       }
 
@@ -419,8 +436,8 @@ Negative prompt: violence, scary, dark, photorealistic, adult content, weapons, 
         toast.success('Conversación guardada ✓');
       }
     } catch (error) {
-      console.error('Error saving:', error);
-      toast.error(`Error: ${error.message || 'No se pudo guardar'}`);
+      console.error('Error completo:', error);
+      toast.error(`Error al guardar: ${error.message || 'Intenta de nuevo'}`);
     }
   };
 
