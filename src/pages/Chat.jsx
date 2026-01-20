@@ -51,9 +51,26 @@ export default function Chat() {
   const [autoPlayVoice, setAutoPlayVoice] = useState(false);
   const [currentConversationId, setCurrentConversationId] = useState(null);
   const [needsManualSave, setNeedsManualSave] = useState(false);
+  const [isGuestMode, setIsGuestMode] = useState(false);
+  const [guestQuestionCount, setGuestQuestionCount] = useState(0);
 
   useEffect(() => {
-    loadProfile();
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('mode') === 'guest') {
+      setIsGuestMode(true);
+      setProfile({
+        display_name: 'Invitado',
+        avatar_type: 'robot',
+        companion_name: 'Sofia',
+        grade: '4_primaria'
+      });
+      setMessages([{
+        role: 'assistant',
+        content: '¡Hola! 🌟 Soy Sofia, tu compañera de estudio. Puedes hacerme 3 preguntas gratis para probarme. ¿Qué quieres saber?'
+      }]);
+    } else {
+      loadProfile();
+    }
   }, []);
 
   useEffect(() => {
@@ -298,10 +315,27 @@ PERSONALIDAD BASE:
   };
 
   const handleSend = async (message) => {
+    // Verificar límite en modo invitado
+    if (isGuestMode && guestQuestionCount >= 3) {
+      toast.error('¡Se acabó tu prueba gratuita! 🎉', {
+        description: 'Elige tu rol para continuar aprendiendo sin límites',
+        duration: 5000,
+        action: {
+          label: 'Empezar ahora',
+          onClick: () => navigate(createPageUrl('Home'))
+        }
+      });
+      return;
+    }
+
     const userMessage = { role: 'user', content: message };
     setMessages(prev => [...prev, userMessage]);
     setIsThinking(true);
     setAvatarState('thinking');
+    
+    if (isGuestMode) {
+      setGuestQuestionCount(prev => prev + 1);
+    }
 
     try {
       // Detectar si el estudiante pide generar una imagen
@@ -346,8 +380,18 @@ Negative prompt: violence, scary, dark, photorealistic, adult content, weapons, 
         const assistantMessage = { role: 'assistant', content: aiResponse };
         setMessages(prev => [...prev, assistantMessage]);
         
-        // Auto-guardar para 1º-3º primaria
-        if (!needsManualSave) {
+        // Mostrar aviso después de la 3ra pregunta en modo invitado
+        if (isGuestMode && guestQuestionCount === 2) {
+          setTimeout(() => {
+            setMessages(prev => [...prev, {
+              role: 'assistant',
+              content: '¡Esta fue tu última pregunta gratuita! 🎁 Para seguir aprendiendo sin límites, elige tu rol y crea tu cuenta. ¡Te espero! ✨'
+            }]);
+          }, 2000);
+        }
+        
+        // Auto-guardar para 1º-3º primaria (no en modo invitado)
+        if (!needsManualSave && !isGuestMode) {
           await autoSaveConversation([...messages, userMessage, assistantMessage]);
         }
       }
@@ -493,7 +537,7 @@ Negative prompt: violence, scary, dark, photorealistic, adult content, weapons, 
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => navigate(createPageUrl('Dashboard'))}
+              onClick={() => navigate(isGuestMode ? createPageUrl('Home') : createPageUrl('Dashboard'))}
               className="rounded-full"
             >
               <ArrowLeft className="w-5 h-5" />
@@ -514,7 +558,14 @@ Negative prompt: violence, scary, dark, photorealistic, adult content, weapons, 
 
           {/* Mode selector & Save */}
           <div className="flex gap-2">
-            {needsManualSave && messages.length > 1 && (
+            {isGuestMode && (
+              <div className="px-3 py-2 rounded-xl bg-gradient-to-r from-amber-100 to-orange-100 border border-amber-300 flex items-center gap-2">
+                <span className="text-sm font-bold text-amber-700">
+                  {3 - guestQuestionCount} preguntas restantes
+                </span>
+              </div>
+            )}
+            {needsManualSave && messages.length > 1 && !isGuestMode && (
               <Button
                 variant="outline"
                 size="icon"
