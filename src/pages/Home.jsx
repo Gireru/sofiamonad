@@ -397,7 +397,7 @@ export default function Home() {
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 1, duration: 0.6 }}
-          className="mb-8"
+          className="mb-8 flex flex-col items-center gap-3"
         >
           <motion.button
             onClick={() => navigate(createPageUrl('Chat') + '?mode=guest')}
@@ -432,6 +432,20 @@ export default function Home() {
                 Empezar a chatear
               </p>
             </div>
+          </motion.button>
+
+          {/* Botón secundario para el Ecosistema */}
+          <motion.button
+            onClick={() => navigate(createPageUrl('Ecosystem'))}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1.3 }}
+            whileHover={{ scale: 1.05, y: -2 }}
+            whileTap={{ scale: 0.95 }}
+            className="flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-purple-600 transition-colors group"
+          >
+            <Sparkles className="w-4 h-4 group-hover:text-purple-500 transition-colors" />
+            <span>¿Qué es Sofia? Descubre la Magia</span>
           </motion.button>
         </motion.div>
 
