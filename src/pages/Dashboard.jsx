@@ -78,7 +78,27 @@ export default function Dashboard() {
         navigate(createPageUrl('Onboarding'));
       }
     }
-  };
+  }, [navigate]);
+
+  useEffect(() => {
+    loadProfile();
+    updateGreeting();
+    
+    // Verificar si hay códigos de bienvenida para mostrar
+    const codes = localStorage.getItem('sofia_welcome_codes');
+    if (codes) {
+      setWelcomeCodes(JSON.parse(codes));
+      setShowCodesModal(true);
+      localStorage.removeItem('sofia_welcome_codes');
+    }
+  }, [loadProfile, updateGreeting]);
+
+  const statsData = useMemo(() => [
+    { icon: Zap, value: profile?.xp_points || 0, label: "XP puntos", gradient: "from-yellow-400 to-orange-500", delay: 0.1 },
+    { icon: Clock, value: `${profile?.total_minutes || 0}m`, label: "Tiempo total", gradient: "from-blue-400 to-cyan-500", delay: 0.2 },
+    { icon: Star, value: profile?.total_sessions || 0, label: "Sesiones", gradient: "from-purple-400 to-pink-500", delay: 0.3 },
+    { icon: Trophy, value: profile?.achievements?.length || 1, label: "Logros", gradient: "from-green-400 to-emerald-500", delay: 0.4 }
+  ], [profile]);
 
   if (!profile) {
     return (

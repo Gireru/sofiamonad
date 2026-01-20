@@ -72,7 +72,7 @@ export default function Home() {
     );
   }
 
-  const roles = [
+  const roles = React.useMemo(() => [
     {
       id: 'student',
       title: 'Soy Estudiante',
