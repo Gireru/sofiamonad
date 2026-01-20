@@ -5,7 +5,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Zap, Clock, Star, Trophy, Settings, ChevronRight, MessageSquare, Copy, Check } from 'lucide-react';
+import { Zap, Clock, Star, Trophy, Settings, ChevronRight, MessageSquare, Copy, Check, History } from 'lucide-react';
 
 import Avatar3D from '@/components/avatars/Avatar3D';
 import StatsCard from '@/components/dashboard/StatsCard';
@@ -122,11 +122,18 @@ export default function Dashboard() {
             <span className="font-bold text-xl text-slate-800">Sofia</span>
           </div>
           
-          <Link to={createPageUrl('Settings')}>
-            <Button variant="ghost" size="icon" className="rounded-full">
-              <Settings className="w-5 h-5 text-slate-600" />
-            </Button>
-          </Link>
+          <div className="flex gap-2">
+            <Link to={createPageUrl('History')}>
+              <Button variant="ghost" size="icon" className="rounded-full" title="Historial">
+                <History className="w-5 h-5 text-slate-600" />
+              </Button>
+            </Link>
+            <Link to={createPageUrl('Settings')}>
+              <Button variant="ghost" size="icon" className="rounded-full" title="Configuración">
+                <Settings className="w-5 h-5 text-slate-600" />
+              </Button>
+            </Link>
+          </div>
         </div>
       </header>
 

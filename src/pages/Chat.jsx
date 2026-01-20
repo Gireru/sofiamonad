@@ -3,8 +3,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { ArrowLeft, Sparkles, BookOpen, Palette, MessageCircle } from 'lucide-react';
+import { ArrowLeft, Sparkles, BookOpen, Palette, MessageCircle, Save } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
 import ChatMessage from '@/components/chat/ChatMessage';
 import ChatInput from '@/components/chat/ChatInput';
@@ -42,6 +43,8 @@ export default function Chat() {
   const [currentMode, setCurrentMode] = useState('tutor');
   const [avatarState, setAvatarState] = useState('idle');
   const [autoPlayVoice, setAutoPlayVoice] = useState(false);
+  const [currentConversationId, setCurrentConversationId] = useState(null);
+  const [needsManualSave, setNeedsManualSave] = useState(false);
 
   useEffect(() => {
     loadProfile();
@@ -83,10 +86,14 @@ export default function Chat() {
       }
 
       if (currentProfile) {
-        // Determinar auto-play según grado (Nivel 1: 1º-3º Primaria)
+        // Determinar auto-play y auto-save según grado
         const gradeNumber = parseInt(currentProfile.grade?.split('_')[0] || '4');
         const isPrimary = currentProfile.grade?.includes('primaria');
         const shouldAutoPlay = gradeNumber >= 1 && gradeNumber <= 3 && isPrimary;
+        
+        // 1º-3º primaria: auto-save, 4º primaria en adelante: manual save
+        const isAutoSave = gradeNumber >= 1 && gradeNumber <= 3 && isPrimary;
+        setNeedsManualSave(!isAutoSave);
         
         // Verificar configuración del usuario (por defecto true para Nivel 1)
         const userPreference = localStorage.getItem('sofia_autoplay_voice');
@@ -317,7 +324,13 @@ Negative prompt: violence, scary, dark, photorealistic, adult content, weapons, 
           add_context_from_internet: currentMode === 'tutor'
         });
 
-        setMessages(prev => [...prev, { role: 'assistant', content: aiResponse }]);
+        const assistantMessage = { role: 'assistant', content: aiResponse };
+        setMessages(prev => [...prev, assistantMessage]);
+        
+        // Auto-guardar para 1º-3º primaria
+        if (!needsManualSave) {
+          await autoSaveConversation([...messages, userMessage, assistantMessage]);
+        }
       }
     } catch (error) {
       console.error('Error getting response:', error);
@@ -329,6 +342,64 @@ Negative prompt: violence, scary, dark, photorealistic, adult content, weapons, 
 
     setIsThinking(false);
     setAvatarState('idle');
+  };
+
+  const autoSaveConversation = async (msgs) => {
+    try {
+      const isAuth = await base44.auth.isAuthenticated();
+      if (!isAuth || !profile?.id) return;
+
+      const conversationData = {
+        student_id: profile.id,
+        title: msgs.find(m => m.role === 'user')?.content.substring(0, 50) || 'Conversación',
+        mode: currentMode,
+        subject: currentMode === 'tutor' ? 'general' : null,
+        messages: msgs,
+        topics_covered: []
+      };
+
+      if (currentConversationId) {
+        await base44.entities.Conversation.update(currentConversationId, conversationData);
+      } else {
+        const newConv = await base44.entities.Conversation.create(conversationData);
+        setCurrentConversationId(newConv.id);
+      }
+    } catch (error) {
+      console.error('Error auto-saving:', error);
+    }
+  };
+
+  const handleManualSave = async () => {
+    try {
+      const isAuth = await base44.auth.isAuthenticated();
+      if (!isAuth) {
+        toast.error('Debes iniciar sesión para guardar conversaciones');
+        return;
+      }
+
+      if (!profile?.id) return;
+
+      const conversationData = {
+        student_id: profile.id,
+        title: messages.find(m => m.role === 'user')?.content.substring(0, 50) || 'Conversación',
+        mode: currentMode,
+        subject: currentMode === 'tutor' ? 'general' : null,
+        messages: messages,
+        topics_covered: []
+      };
+
+      if (currentConversationId) {
+        await base44.entities.Conversation.update(currentConversationId, conversationData);
+        toast.success('Conversación actualizada');
+      } else {
+        const newConv = await base44.entities.Conversation.create(conversationData);
+        setCurrentConversationId(newConv.id);
+        toast.success('Conversación guardada');
+      }
+    } catch (error) {
+      console.error('Error saving:', error);
+      toast.error('Error al guardar');
+    }
   };
 
   const toggleVoice = () => {
@@ -376,8 +447,20 @@ Negative prompt: violence, scary, dark, photorealistic, adult content, weapons, 
             </div>
           </div>
 
-          {/* Mode selector */}
+          {/* Mode selector & Save */}
           <div className="flex gap-2">
+            {needsManualSave && messages.length > 1 && (
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={handleManualSave}
+                className="rounded-full"
+                title="Guardar conversación"
+              >
+                <Save className="w-4 h-4" />
+              </Button>
+            )}
+            
             {Object.entries(modes).map(([key, mode]) => {
               const Icon = mode.icon;
               return (

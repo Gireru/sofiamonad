@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { ArrowLeft, Eye, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, Eye, AlertTriangle, History } from 'lucide-react';
 import { toast } from 'sonner';
 
 import EmotionalSemaphore from '@/components/parent/EmotionalSemaphore';
@@ -157,7 +157,15 @@ export default function ParentDashboard() {
               <p className="text-sm text-slate-500">Vista Guardián - {profile.display_name}</p>
             </div>
           </div>
-          <span className="text-2xl">🛡️</span>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate(createPageUrl('ParentHistory'))}
+            className="rounded-full"
+            title="Ver historial"
+          >
+            <History className="w-5 h-5 text-slate-600" />
+          </Button>
         </div>
       </header>
 

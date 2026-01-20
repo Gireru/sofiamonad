@@ -8,6 +8,8 @@ import TeacherDashboard from './pages/TeacherDashboard';
 import Dashboard from './pages/Dashboard';
 import Home from './pages/Home';
 import TeacherLogin from './pages/TeacherLogin';
+import History from './pages/History';
+import ParentHistory from './pages/ParentHistory';
 import __Layout from './Layout.jsx';
 
 
@@ -22,6 +24,8 @@ export const PAGES = {
     "Dashboard": Dashboard,
     "Home": Home,
     "TeacherLogin": TeacherLogin,
+    "History": History,
+    "ParentHistory": ParentHistory,
 }
 
 export const pagesConfig = {
