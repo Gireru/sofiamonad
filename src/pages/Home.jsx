@@ -428,26 +428,9 @@ export default function Home() {
             />
             
             <div className="relative bg-white rounded-2xl px-8 py-4 flex items-center gap-3 shadow-2xl border-2 border-white/50">
-              <motion.span
-                className="text-3xl"
-                animate={{ 
-                  rotate: [0, 15, -15, 0],
-                  scale: [1, 1.2, 1]
-                }}
-                transition={{ duration: 2, repeat: Infinity }}
-              >
-                🎮
-              </motion.span>
               <p className="text-xl font-black bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500">
                 Empezar a chatear
               </p>
-              <motion.span
-                animate={{ x: [0, 5, 0] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
-                className="text-2xl"
-              >
-                ✨
-              </motion.span>
             </div>
           </motion.button>
         </motion.div>
