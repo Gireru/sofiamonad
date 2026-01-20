@@ -226,115 +226,169 @@ export default function Home() {
       {/* Main content */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-screen p-6">
         
-        {/* Logo and Welcome */}
+        {/* New Animated Welcome */}
         <motion.div
-          initial={{ opacity: 0, y: -30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="text-center mb-16"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1 }}
+          className="text-center mb-12"
         >
-          <motion.div
-            animate={{ 
-              y: [0, -8, 0],
-            }}
-            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-            className="inline-block mb-8 relative"
-          >
-            {/* Glow effect behind logo */}
-            <div className="absolute inset-0 bg-gradient-to-br from-sky-400 to-indigo-600 rounded-3xl blur-2xl opacity-40 scale-110" />
-            
-            {profile && inventory ? (
-              <div className="relative w-28 h-28 mx-auto">
-                <Avatar3D type={profile.avatar_type} size="xl" state="idle" />
-                
-                {inventory.equipped_items?.hat && (
-                  <div className="absolute -top-2 left-1/2 -translate-x-1/2 text-4xl">
-                    {getItemEmoji(inventory.equipped_items.hat)}
-                  </div>
-                )}
-                {inventory.equipped_items?.glasses && (
-                  <div className="absolute top-1/3 left-1/2 -translate-x-1/2 text-3xl">
-                    {getItemEmoji(inventory.equipped_items.glasses)}
-                  </div>
-                )}
-              </div>
-            ) : (
-              <div className="relative w-28 h-28 mx-auto bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600 rounded-3xl flex items-center justify-center shadow-2xl shadow-blue-500/40">
-                <motion.span 
-                  className="text-6xl"
-                  animate={{ rotate: [0, 10, -10, 0] }}
-                  transition={{ duration: 4, repeat: Infinity }}
-                >
-                  ✨
-                </motion.span>
-                
-                {/* Orbiting sparkles */}
-                {[0, 120, 240].map((angle, i) => (
-                  <motion.div
-                    key={i}
-                    className="absolute"
-                    animate={{
-                      rotate: 360,
-                    }}
-                    transition={{
-                      duration: 8,
-                      repeat: Infinity,
-                      ease: "linear",
-                      delay: i * 0.3,
-                    }}
-                    style={{
-                      left: '50%',
-                      top: '50%',
-                    }}
-                  >
-                    <motion.div
-                      animate={{
-                        scale: [1, 1.3, 1],
-                        opacity: [0.6, 1, 0.6],
-                      }}
-                      transition={{
-                        duration: 2,
-                        repeat: Infinity,
-                        delay: i * 0.2,
-                      }}
-                    >
-                      <Sparkles 
-                        className="w-6 h-6 text-yellow-300" 
-                        style={{
-                          transform: `translate(-50%, -50%) translate(${Math.cos(angle * Math.PI / 180) * 60}px, ${Math.sin(angle * Math.PI / 180) * 60}px)`,
-                        }}
-                      />
-                    </motion.div>
-                  </motion.div>
-                ))}
-              </div>
-            )}
-          </motion.div>
-          
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 0.3, duration: 0.6 }}
-          >
-            <h1 className="text-6xl md:text-7xl font-black mb-4 tracking-tight text-center">
-              <span className="bg-clip-text text-transparent bg-gradient-to-r from-sky-500 via-blue-600 to-indigo-600 drop-shadow-sm">
-                Sofia
-              </span>
-            </h1>
+          {/* Floating Logo with particles */}
+          <motion.div className="relative inline-block mb-8">
+            {/* Central glowing orb */}
+            <motion.div
+              animate={{
+                scale: [1, 1.2, 1],
+                rotate: [0, 180, 360],
+              }}
+              transition={{
+                duration: 4,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              className="absolute inset-0 bg-gradient-to-br from-sky-300 via-purple-300 to-pink-300 rounded-full blur-3xl opacity-40"
+            />
             
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="text-center"
+              initial={{ scale: 0, rotate: -180 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ 
+                type: "spring", 
+                stiffness: 100, 
+                damping: 15,
+                delay: 0.2 
+              }}
+              className="relative"
             >
-              <p className="text-2xl md:text-3xl font-bold text-slate-800 mb-3">
-                ¿Quién eres hoy?
-              </p>
-              <p className="text-lg text-slate-500 font-medium">
-                Elige tu rol para empezar la aventura
-              </p>
+              {profile && inventory ? (
+                <div className="relative w-32 h-32 mx-auto">
+                  <motion.div
+                    animate={{ y: [0, -10, 0] }}
+                    transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                  >
+                    <Avatar3D type={profile.avatar_type} size="xl" state="idle" />
+                  </motion.div>
+                  
+                  {inventory.equipped_items?.hat && (
+                    <motion.div 
+                      className="absolute -top-2 left-1/2 -translate-x-1/2 text-4xl"
+                      animate={{ rotate: [-5, 5, -5] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                    >
+                      {getItemEmoji(inventory.equipped_items.hat)}
+                    </motion.div>
+                  )}
+                  {inventory.equipped_items?.glasses && (
+                    <div className="absolute top-1/3 left-1/2 -translate-x-1/2 text-3xl">
+                      {getItemEmoji(inventory.equipped_items.glasses)}
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <motion.div
+                  animate={{ y: [0, -10, 0] }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                  className="w-32 h-32 bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600 rounded-full flex items-center justify-center shadow-2xl relative overflow-hidden"
+                >
+                  {/* Inner glow effect */}
+                  <motion.div
+                    animate={{
+                      scale: [1, 1.5, 1],
+                      opacity: [0.3, 0.6, 0.3],
+                    }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                    className="absolute inset-0 bg-white rounded-full"
+                  />
+                  
+                  <motion.span 
+                    className="text-6xl relative z-10"
+                    animate={{ 
+                      rotate: [0, 360],
+                      scale: [1, 1.2, 1]
+                    }}
+                    transition={{ 
+                      rotate: { duration: 8, repeat: Infinity, ease: "linear" },
+                      scale: { duration: 3, repeat: Infinity }
+                    }}
+                  >
+                    ✨
+                  </motion.span>
+                </motion.div>
+              )}
             </motion.div>
+            
+            {/* Orbiting elements */}
+            {[0, 60, 120, 180, 240, 300].map((angle, i) => (
+              <motion.div
+                key={i}
+                className="absolute"
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{
+                  opacity: [0, 1, 0],
+                  scale: [0, 1, 0],
+                  x: Math.cos((angle + i * 60) * Math.PI / 180) * 80,
+                  y: Math.sin((angle + i * 60) * Math.PI / 180) * 80,
+                }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                  delay: i * 0.2,
+                }}
+                style={{
+                  left: '50%',
+                  top: '50%',
+                }}
+              >
+                <div className="w-3 h-3 bg-gradient-to-br from-yellow-300 to-orange-400 rounded-full shadow-lg" />
+              </motion.div>
+            ))}
+          </motion.div>
+          
+          {/* Title with split animation */}
+          <div className="overflow-hidden mb-6">
+            <motion.h1 
+              initial={{ y: 100, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.4, duration: 0.8, type: "spring" }}
+              className="text-7xl md:text-8xl font-black tracking-tight"
+            >
+              <motion.span
+                animate={{
+                  backgroundPosition: ["0% 50%", "100% 50%", "0% 50%"],
+                }}
+                transition={{ duration: 5, repeat: Infinity }}
+                className="bg-clip-text text-transparent bg-gradient-to-r from-sky-400 via-purple-500 to-pink-500 bg-[length:200%_auto]"
+                style={{
+                  display: "inline-block",
+                }}
+              >
+                Sofia
+              </motion.span>
+            </motion.h1>
+          </div>
+          
+          {/* Subtitle with stagger effect */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.7, duration: 0.6 }}
+            className="space-y-2"
+          >
+            <motion.p 
+              className="text-2xl md:text-3xl font-bold text-slate-800"
+              animate={{ scale: [1, 1.02, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+            >
+              Tu compañero inteligente de estudio
+            </motion.p>
+            <motion.p 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1 }}
+              className="text-lg text-slate-500 font-medium"
+            >
+              Aprende de forma divertida y personalizada 🚀
+            </motion.p>
           </motion.div>
         </motion.div>
 
