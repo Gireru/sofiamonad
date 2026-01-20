@@ -7,9 +7,10 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { 
   ArrowLeft, User, Shield, Bell, Palette, Key, Copy, 
-  Check, LogOut, ChevronRight, RefreshCw, UserPlus
+  Check, LogOut, ChevronRight, RefreshCw, UserPlus, GraduationCap
 } from 'lucide-react';
 
 import Avatar3D from '@/components/avatars/Avatar3D';
@@ -244,14 +245,44 @@ export default function Settings() {
               </div>
             </div>
             
-            <Button
-              variant="outline"
-              onClick={() => navigate(createPageUrl('Onboarding'))}
-              className="w-full rounded-xl"
-            >
-              <RefreshCw className="w-4 h-4 mr-2" />
-              Cambiar compañero
-            </Button>
+            <div className="space-y-4">
+              <Button
+                variant="outline"
+                onClick={() => navigate(createPageUrl('Onboarding'))}
+                className="w-full rounded-xl"
+              >
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Cambiar compañero
+              </Button>
+
+              <div>
+                <label className="text-sm font-medium text-slate-700 mb-2 block">
+                  Grado escolar
+                </label>
+                <Select
+                  value={profile.grade}
+                  onValueChange={(value) => updateProfile({ grade: value })}
+                >
+                  <SelectTrigger className="w-full rounded-xl">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1_primaria">1° Primaria</SelectItem>
+                    <SelectItem value="2_primaria">2° Primaria</SelectItem>
+                    <SelectItem value="3_primaria">3° Primaria</SelectItem>
+                    <SelectItem value="4_primaria">4° Primaria</SelectItem>
+                    <SelectItem value="5_primaria">5° Primaria</SelectItem>
+                    <SelectItem value="6_primaria">6° Primaria</SelectItem>
+                    <SelectItem value="1_secundaria">1° Secundaria</SelectItem>
+                    <SelectItem value="2_secundaria">2° Secundaria</SelectItem>
+                    <SelectItem value="3_secundaria">3° Secundaria</SelectItem>
+                  </SelectContent>
+                </Select>
+                <p className="text-xs text-slate-500 mt-2">
+                  Actualiza tu grado al inicio de cada ciclo escolar
+                </p>
+              </div>
+            </div>
           </CardContent>
         </Card>
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { BookOpen, Palette, MessageCircle, Camera, ShoppingBag, Settings } from 'lucide-react';
+import { BookOpen, Palette, MessageCircle, Camera, ShoppingBag, Settings, GraduationCap } from 'lucide-react';
 
 const actions = [
   {
@@ -13,6 +13,15 @@ const actions = [
     gradient: 'from-green-400 to-emerald-500',
     page: 'Chat',
     params: '?mode=tutor'
+  },
+  {
+    id: 'exam',
+    icon: GraduationCap,
+    label: 'Estudiar para examen',
+    description: 'Repasa tus libros',
+    gradient: 'from-indigo-400 to-violet-500',
+    page: 'Chat',
+    params: '?mode=exam'
   },
   {
     id: 'creative',
@@ -66,7 +75,7 @@ export default function QuickActions({ studentGrade }) {
   const isEarlyGrade = ['1_primaria', '2_primaria', '3_primaria'].includes(studentGrade);
   
   // Acciones básicas para 1° a 3° primaria
-  const basicActionsIds = ['tutor', 'creative', 'free', 'shop'];
+  const basicActionsIds = ['tutor', 'exam', 'creative', 'free', 'shop'];
   
   // Filtrar acciones según el grado
   const filteredActions = isEarlyGrade 

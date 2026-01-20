@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { ArrowLeft, Sparkles, BookOpen, Palette, MessageCircle, Save } from 'lucide-react';
+import { ArrowLeft, Sparkles, BookOpen, Palette, MessageCircle, Save, GraduationCap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
@@ -18,6 +18,12 @@ const modes = {
     icon: BookOpen, 
     color: 'from-green-400 to-emerald-500',
     description: 'Ayuda con tus tareas y materias'
+  },
+  exam: { 
+    label: 'Examen', 
+    icon: GraduationCap, 
+    color: 'from-indigo-400 to-violet-500',
+    description: 'Estudia para tus exámenes'
   },
   creative: { 
     label: 'Creativo', 
@@ -48,6 +54,13 @@ export default function Chat() {
 
   useEffect(() => {
     loadProfile();
+    
+    // Detectar modo desde URL
+    const params = new URLSearchParams(window.location.search);
+    const modeParam = params.get('mode');
+    if (modeParam && modes[modeParam]) {
+      setCurrentMode(modeParam);
+    }
   }, []);
 
   useEffect(() => {
@@ -243,6 +256,13 @@ Niño de 1º pregunta sobre bebés → "¡Esa es una gran pregunta de biología!
       - Si piden que hagas la tarea completa, di: "¡Mejor lo hacemos juntos! ¿Qué tal si tú empiezas y yo te ayudo?"
       - Usa los contenidos de los Libros de la SEP de México como referencia principal.
       - Explica paso a paso, verificando que entienda antes de avanzar.`,
+      exam: `Estás en modo PREPARACIÓN PARA EXAMEN. Tu objetivo es ayudar al estudiante a repasar cualquier tema de sus libros.
+      - Pregunta primero qué tema o materia quiere estudiar
+      - Usa los Libros de Texto Gratuitos de la SEP como referencia principal
+      - Genera preguntas de repaso sobre el tema para verificar comprensión
+      - Explica conceptos clave de manera clara y estructurada
+      - Ofrece ejercicios prácticos similares a los que podrían venir en el examen
+      - Al final, resume los puntos más importantes del tema`,
       creative: `Estás en modo CREATIVO. Puedes ayudar a generar ideas para:
       - Dibujos conceptuales (describiendo cómo sería la imagen)
       - Presentaciones escolares
