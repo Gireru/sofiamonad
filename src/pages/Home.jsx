@@ -243,75 +243,72 @@ export default function Home() {
             {/* Glow effect behind logo */}
             <div className="absolute inset-0 bg-gradient-to-br from-sky-400 to-indigo-600 rounded-3xl blur-2xl opacity-40 scale-110" />
             
-            <div className="relative w-28 h-28 mx-auto">
-              {profile && inventory ? (
-                <div className="relative">
-                  <Avatar3D type={profile.avatar_type} size="xl" state="idle" />
-                  
-                  {inventory.equipped_items?.hat && (
-                    <div className="absolute -top-2 left-1/2 -translate-x-1/2 text-4xl">
-                      {getItemEmoji(inventory.equipped_items.hat)}
-                    </div>
-                  )}
-                  {inventory.equipped_items?.glasses && (
-                    <div className="absolute top-1/3 left-1/2 -translate-x-1/2 text-3xl">
-                      {getItemEmoji(inventory.equipped_items.glasses)}
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <div className="w-28 h-28 bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600 rounded-3xl flex items-center justify-center shadow-2xl shadow-blue-500/40">
-                  <motion.span 
-                    className="text-6xl"
-                    animate={{ rotate: [0, 10, -10, 0] }}
-                    transition={{ duration: 4, repeat: Infinity }}
-                  >
-                    ✨
-                  </motion.span>
-                </div>
-              )}
-            </div>
-              
-              {/* Orbiting sparkles */}
-              {[0, 120, 240].map((angle, i) => (
-                <motion.div
-                  key={i}
-                  className="absolute"
-                  animate={{
-                    rotate: 360,
-                  }}
-                  transition={{
-                    duration: 8,
-                    repeat: Infinity,
-                    ease: "linear",
-                    delay: i * 0.3,
-                  }}
-                  style={{
-                    left: '50%',
-                    top: '50%',
-                  }}
+            {profile && inventory ? (
+              <div className="relative w-28 h-28 mx-auto">
+                <Avatar3D type={profile.avatar_type} size="xl" state="idle" />
+                
+                {inventory.equipped_items?.hat && (
+                  <div className="absolute -top-2 left-1/2 -translate-x-1/2 text-4xl">
+                    {getItemEmoji(inventory.equipped_items.hat)}
+                  </div>
+                )}
+                {inventory.equipped_items?.glasses && (
+                  <div className="absolute top-1/3 left-1/2 -translate-x-1/2 text-3xl">
+                    {getItemEmoji(inventory.equipped_items.glasses)}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <div className="relative w-28 h-28 mx-auto bg-gradient-to-br from-sky-400 via-blue-500 to-indigo-600 rounded-3xl flex items-center justify-center shadow-2xl shadow-blue-500/40">
+                <motion.span 
+                  className="text-6xl"
+                  animate={{ rotate: [0, 10, -10, 0] }}
+                  transition={{ duration: 4, repeat: Infinity }}
                 >
+                  ✨
+                </motion.span>
+                
+                {/* Orbiting sparkles */}
+                {[0, 120, 240].map((angle, i) => (
                   <motion.div
+                    key={i}
+                    className="absolute"
                     animate={{
-                      scale: [1, 1.3, 1],
-                      opacity: [0.6, 1, 0.6],
+                      rotate: 360,
                     }}
                     transition={{
-                      duration: 2,
+                      duration: 8,
                       repeat: Infinity,
-                      delay: i * 0.2,
+                      ease: "linear",
+                      delay: i * 0.3,
+                    }}
+                    style={{
+                      left: '50%',
+                      top: '50%',
                     }}
                   >
-                    <Sparkles 
-                      className="w-6 h-6 text-yellow-300" 
-                      style={{
-                        transform: `translate(-50%, -50%) translate(${Math.cos(angle * Math.PI / 180) * 60}px, ${Math.sin(angle * Math.PI / 180) * 60}px)`,
+                    <motion.div
+                      animate={{
+                        scale: [1, 1.3, 1],
+                        opacity: [0.6, 1, 0.6],
                       }}
-                    />
+                      transition={{
+                        duration: 2,
+                        repeat: Infinity,
+                        delay: i * 0.2,
+                      }}
+                    >
+                      <Sparkles 
+                        className="w-6 h-6 text-yellow-300" 
+                        style={{
+                          transform: `translate(-50%, -50%) translate(${Math.cos(angle * Math.PI / 180) * 60}px, ${Math.sin(angle * Math.PI / 180) * 60}px)`,
+                        }}
+                      />
+                    </motion.div>
                   </motion.div>
-                </motion.div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </motion.div>
           
           <motion.div
