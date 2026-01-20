@@ -384,12 +384,9 @@ export default function Home() {
               >
                 🎮
               </motion.span>
-              <div className="text-left">
-                <p className="text-xl font-black bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500">
-                  ¡Prueba Gratis!
-                </p>
-                <p className="text-xs text-slate-500 font-medium">3 preguntas sin registro</p>
-              </div>
+              <p className="text-xl font-black bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500">
+                Empezar a chatear
+              </p>
               <motion.span
                 animate={{ x: [0, 5, 0] }}
                 transition={{ duration: 1.5, repeat: Infinity }}
