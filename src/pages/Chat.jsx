@@ -397,28 +397,31 @@ Negative prompt: violence, scary, dark, photorealistic, adult content, weapons, 
         return;
       }
 
-      if (!profile?.id) return;
+      if (!profile?.id) {
+        toast.error('Error: No se encontró el perfil');
+        return;
+      }
 
       const conversationData = {
         student_id: profile.id,
         title: messages.find(m => m.role === 'user')?.content.substring(0, 50) || 'Conversación',
         mode: currentMode,
-        subject: currentMode === 'tutor' ? 'general' : null,
+        subject: currentMode === 'tutor' || currentMode === 'exam' ? 'general' : null,
         messages: messages,
         topics_covered: []
       };
 
       if (currentConversationId) {
         await base44.entities.Conversation.update(currentConversationId, conversationData);
-        toast.success('Conversación actualizada');
+        toast.success('Conversación actualizada ✓');
       } else {
         const newConv = await base44.entities.Conversation.create(conversationData);
         setCurrentConversationId(newConv.id);
-        toast.success('Conversación guardada');
+        toast.success('Conversación guardada ✓');
       }
     } catch (error) {
       console.error('Error saving:', error);
-      toast.error('Error al guardar');
+      toast.error(`Error: ${error.message || 'No se pudo guardar'}`);
     }
   };
 
