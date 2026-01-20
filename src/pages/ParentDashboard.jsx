@@ -56,8 +56,8 @@ export default function ParentDashboard() {
           setSafetySettings(JSON.parse(settings));
         }
         
-        // Generar resumen de actividades del día (simulado)
-        generateTodayActivities(profiles[0]);
+        // Cargar actividades reales del día
+        await generateTodayActivities(profiles[0]);
       }
     } catch (error) {
       console.error('Error loading data:', error);
@@ -65,29 +65,52 @@ export default function ParentDashboard() {
     }
   };
 
-  const generateTodayActivities = (studentProfile) => {
-    // Simulación de actividades del día (en producción vendrían de Conversation/LearningMetric)
-    const mockActivities = [
-      {
-        time: '16:30',
-        mode: 'tutor',
-        description: 'Repasó el Ciclo del Agua',
-        subject: 'Ciencias Naturales'
-      },
-      {
-        time: '17:00',
-        mode: 'creative',
-        description: 'Creó una imagen de una célula vegetal',
-        subject: 'Biología'
-      },
-      {
-        time: '17:15',
-        mode: 'free',
-        description: `Jugó con ${studentProfile.companion_name} en el Chat Libre`,
-        subject: null
-      }
-    ];
-    setTodayActivities(mockActivities);
+  const generateTodayActivities = async (studentProfile) => {
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      
+      // Cargar conversaciones de hoy del estudiante
+      const conversations = await base44.entities.Conversation.filter({ 
+        student_id: studentProfile.id 
+      });
+      
+      // Filtrar conversaciones de hoy y crear actividades
+      const activities = conversations
+        .filter(conv => {
+          const convDate = new Date(conv.created_date).toISOString().split('T')[0];
+          return convDate === today && conv.messages && conv.messages.length > 0;
+        })
+        .map(conv => {
+          const time = new Date(conv.created_date).toLocaleTimeString('es-MX', { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+          });
+          
+          const subjectLabels = {
+            matematicas: 'Matemáticas',
+            espanol: 'Español',
+            ciencias: 'Ciencias',
+            historia: 'Historia',
+            geografia: 'Geografía',
+            civica: 'Cívica',
+            arte: 'Arte',
+            general: 'General'
+          };
+          
+          return {
+            time,
+            mode: conv.mode,
+            description: conv.title || conv.topics_covered?.join(', ') || 'Sesión de estudio',
+            subject: conv.subject ? subjectLabels[conv.subject] : null
+          };
+        })
+        .sort((a, b) => a.time.localeCompare(b.time));
+      
+      setTodayActivities(activities);
+    } catch (error) {
+      console.error('Error loading activities:', error);
+      setTodayActivities([]);
+    }
   };
 
   const handleSettingChange = (key, value) => {
