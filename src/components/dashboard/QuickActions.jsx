@@ -48,7 +48,7 @@ const actions = [
     description: 'Foto de pregunta',
     gradient: 'from-blue-400 to-cyan-500',
     page: 'Chat',
-    params: '?mode=tutor'
+    params: '?homework=true'
   },
   {
     id: 'shop',
