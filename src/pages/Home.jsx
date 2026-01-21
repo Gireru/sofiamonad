@@ -335,7 +335,7 @@ export default function Home() {
             
             <div className="relative bg-white rounded-2xl px-8 py-4 flex items-center gap-3 shadow-2xl border-2 border-white/50">
               <p className="text-xl font-black bg-clip-text text-transparent bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500">
-                Empezar a chatear
+                3 pregunta de prueba
               </p>
             </div>
           </motion.button>
