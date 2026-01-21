@@ -53,6 +53,9 @@ export default function Chat() {
   const [needsManualSave, setNeedsManualSave] = useState(false);
   const [isGuestMode, setIsGuestMode] = useState(false);
   const [guestQuestionCount, setGuestQuestionCount] = useState(0);
+  const [homeworkMode, setHomeworkMode] = useState(false);
+  const [uploadedImage, setUploadedImage] = useState(null);
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -68,6 +71,9 @@ export default function Chat() {
         role: 'assistant',
         content: '¡Hola! 🌟 Soy Sofia, tu compañera de estudio. Puedes hacerme 3 preguntas gratis para probarme. ¿Qué quieres saber?'
       }]);
+    } else if (params.get('homework') === 'true') {
+      setHomeworkMode(true);
+      loadProfile();
     } else {
       loadProfile();
     }
@@ -134,16 +140,23 @@ export default function Chat() {
         }
 
         // Welcome message
-        const greetings = [
-          `¡Hola ${currentProfile.display_name}! 🌟 ¿En qué te puedo ayudar hoy?`,
-          `¡${currentProfile.display_name}! 🎉 Me da gusto verte. ¿Qué vamos a aprender?`,
-          `¡Hey ${currentProfile.display_name}! ✨ Estoy listo para nuestra aventura de hoy.`
-        ];
-        
-        setMessages([{
-          role: 'assistant',
-          content: greetings[Math.floor(Math.random() * greetings.length)]
-        }]);
+        if (homeworkMode) {
+          setMessages([{
+            role: 'assistant',
+            content: `¡Hola ${currentProfile.display_name}! 📸 Toma una foto de tu tarea o súbela desde tu galería. Después dime en qué necesitas ayuda y te guiaré paso a paso. ¡Vamos a resolverla juntos! 💪`
+          }]);
+        } else {
+          const greetings = [
+            `¡Hola ${currentProfile.display_name}! 🌟 ¿En qué te puedo ayudar hoy?`,
+            `¡${currentProfile.display_name}! 🎉 Me da gusto verte. ¿Qué vamos a aprender?`,
+            `¡Hey ${currentProfile.display_name}! ✨ Estoy listo para nuestra aventura de hoy.`
+          ];
+          
+          setMessages([{
+            role: 'assistant',
+            content: greetings[Math.floor(Math.random() * greetings.length)]
+          }]);
+        }
       }
     } catch (error) {
       console.error('Error loading profile:', error);
@@ -314,6 +327,23 @@ PERSONALIDAD BASE:
 - APLICA el protocolo de desvío educativo para temas sensibles`;
   };
 
+  const handleFileUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    try {
+      toast.info('Subiendo imagen... 📸');
+      
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      setUploadedImage(file_url);
+      
+      toast.success('¡Imagen subida! Ahora dime qué necesitas resolver');
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      toast.error('Error al subir la imagen. Intenta de nuevo.');
+    }
+  };
+
   const handleSend = async (message) => {
     // Verificar límite en modo invitado
     if (isGuestMode && guestQuestionCount >= 3) {
@@ -329,7 +359,15 @@ PERSONALIDAD BASE:
     }
 
     const userMessage = { role: 'user', content: message };
-    setMessages(prev => [...prev, userMessage]);
+    
+    // Si hay una imagen y es modo tarea, agregarla al mensaje
+    if (uploadedImage && homeworkMode) {
+      userMessage.image = uploadedImage;
+      setMessages(prev => [...prev, { ...userMessage, content: `📷 *[Imagen de tarea]*\n\n${message}` }]);
+    } else {
+      setMessages(prev => [...prev, userMessage]);
+    }
+    
     setIsThinking(true);
     setAvatarState('thinking');
     
@@ -370,15 +408,33 @@ Negative prompt: violence, scary, dark, photorealistic, adult content, weapons, 
         }]);
       } else {
         // Respuesta normal del LLM
-        const fullPrompt = `${getSystemPrompt()}\n\nHistorial de conversación:\n${messages.map(m => `${m.role === 'user' ? profile?.display_name : profile?.companion_name}: ${m.content}`).join('\n')}\n\n${profile?.display_name}: ${message}\n\n${profile?.companion_name}:`;
+        let fullPrompt = `${getSystemPrompt()}\n\nHistorial de conversación:\n${messages.map(m => `${m.role === 'user' ? profile?.display_name : profile?.companion_name}: ${m.content}`).join('\n')}\n\n${profile?.display_name}: ${message}\n\n${profile?.companion_name}:`;
+
+        // Si hay imagen subida en modo tarea, agregar contexto especial
+        if (uploadedImage && homeworkMode) {
+          fullPrompt = `${getSystemPrompt()}\n\nMODO ESPECIAL: AYUDA CON TAREA ESCANEADA
+El estudiante ha subido una foto de su tarea. Debes:
+1. Analizar la imagen para identificar el ejercicio o problema
+2. NO dar la respuesta directa, sino guiar al estudiante paso a paso
+3. Hacer preguntas para verificar su comprensión
+4. Celebrar cuando entienda cada paso
+
+Pregunta del estudiante: ${message}\n\n${profile?.companion_name}:`;
+        }
 
         const aiResponse = await base44.integrations.Core.InvokeLLM({
           prompt: fullPrompt,
-          add_context_from_internet: currentMode === 'tutor'
+          add_context_from_internet: currentMode === 'tutor',
+          file_urls: uploadedImage && homeworkMode ? [uploadedImage] : undefined
         });
 
         const assistantMessage = { role: 'assistant', content: aiResponse };
         setMessages(prev => [...prev, assistantMessage]);
+        
+        // Limpiar imagen después de usarla
+        if (uploadedImage && homeworkMode) {
+          setUploadedImage(null);
+        }
         
         // Mostrar aviso después de la 3ra pregunta en modo invitado
         if (isGuestMode && guestQuestionCount === 2) {
@@ -604,6 +660,84 @@ Negative prompt: violence, scary, dark, photorealistic, adult content, weapons, 
       {/* Messages */}
       <main className="flex-1 overflow-y-auto px-4 py-6">
         <div className="max-w-4xl mx-auto space-y-4">
+          {/* Homework Mode: Upload Section */}
+          {homeworkMode && !uploadedImage && messages.length === 1 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-gradient-to-br from-sky-50 to-indigo-50 rounded-3xl p-8 border-2 border-dashed border-sky-300"
+            >
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                capture="environment"
+                onChange={handleFileUpload}
+                className="hidden"
+              />
+              
+              <div className="text-center space-y-4">
+                <motion.div
+                  animate={{ scale: [1, 1.1, 1] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="w-24 h-24 mx-auto bg-gradient-to-br from-sky-400 to-indigo-500 rounded-3xl flex items-center justify-center shadow-2xl"
+                >
+                  <span className="text-5xl">📸</span>
+                </motion.div>
+                
+                <div>
+                  <h3 className="text-2xl font-bold text-slate-800 mb-2">
+                    Sube tu tarea
+                  </h3>
+                  <p className="text-slate-600">
+                    Toma una foto clara del ejercicio o problema que necesitas resolver
+                  </p>
+                </div>
+
+                <Button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-600 hover:to-indigo-600 rounded-full px-8 py-6 text-lg shadow-lg"
+                >
+                  📷 Tomar foto / Subir imagen
+                </Button>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Preview uploaded image */}
+          {uploadedImage && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-white rounded-2xl p-4 border-2 border-green-200 shadow-lg"
+            >
+              <div className="flex items-start gap-3">
+                <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <span className="text-2xl">✅</span>
+                </div>
+                <div className="flex-1">
+                  <p className="font-bold text-green-800 mb-2">Imagen lista</p>
+                  <img 
+                    src={uploadedImage} 
+                    alt="Tarea subida" 
+                    className="w-full max-w-md rounded-xl border border-slate-200"
+                  />
+                  <p className="text-sm text-slate-600 mt-2">
+                    Ahora escribe qué parte necesitas que te ayude a resolver
+                  </p>
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setUploadedImage(null)}
+                  className="text-slate-400 hover:text-red-500"
+                >
+                  ✕
+                </Button>
+              </div>
+            </motion.div>
+          )}
+          
           <AnimatePresence>
             {messages.map((msg, i) => (
               <ChatMessage
@@ -631,13 +765,27 @@ Negative prompt: violence, scary, dark, photorealistic, adult content, weapons, 
       </main>
 
       {/* Input */}
-      <ChatInput
-        onSend={handleSend}
-        onVoiceToggle={toggleVoice}
-        isListening={isListening}
-        disabled={isThinking}
-        placeholder={`Escribe a ${profile.companion_name}...`}
-      />
+      <div className="relative">
+        {homeworkMode && !uploadedImage && (
+          <div className="max-w-4xl mx-auto px-4 pb-2">
+            <Button
+              onClick={() => fileInputRef.current?.click()}
+              variant="outline"
+              className="w-full rounded-2xl py-6 border-2 border-dashed border-sky-300 hover:border-sky-500 hover:bg-sky-50 transition-all"
+            >
+              <span className="text-lg">📷 Subir foto de tu tarea</span>
+            </Button>
+          </div>
+        )}
+        
+        <ChatInput
+          onSend={handleSend}
+          onVoiceToggle={toggleVoice}
+          isListening={isListening}
+          disabled={isThinking}
+          placeholder={homeworkMode && uploadedImage ? "¿Qué parte necesitas resolver?" : `Escribe a ${profile.companion_name}...`}
+        />
+      </div>
     </div>
   );
 }
