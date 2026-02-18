@@ -31,61 +31,27 @@ export default function Layout({ children, currentPageName }) {
       <>
         {showMaintenance && (
           <motion.div
-            initial={{ y: -100, opacity: 0 }}
+            initial={{ y: -20, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ type: "spring", stiffness: 100 }}
-            className="fixed top-0 left-0 right-0 z-50 p-2"
+            className="fixed top-0 left-0 right-0 z-50 bg-amber-50 border-b border-amber-200 shadow-sm"
           >
-            <motion.div
-              animate={{ 
-                scale: [1, 1.02, 1],
-                boxShadow: [
-                  "0 10px 30px rgba(245, 158, 11, 0.3)",
-                  "0 15px 40px rgba(245, 158, 11, 0.5)",
-                  "0 10px 30px rgba(245, 158, 11, 0.3)"
-                ]
-              }}
-              transition={{ duration: 2, repeat: Infinity }}
-              className="max-w-4xl mx-auto bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500 rounded-2xl p-3 sm:p-4 border-2 border-amber-300 shadow-2xl"
-            >
-              <div className="flex items-center gap-2 sm:gap-3">
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                  className="w-8 h-8 sm:w-10 sm:h-10 flex-shrink-0"
-                >
-                  <span className="text-2xl sm:text-3xl">🔧</span>
-                </motion.div>
-                
-                <div className="flex-1 min-w-0">
-                  <motion.p
-                    animate={{ opacity: [1, 0.7, 1] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                    className="font-black text-white text-xs sm:text-base"
-                  >
-                    ⚡ MANTENIMIENTO PROGRAMADO ⚡
-                  </motion.p>
-                  <p className="text-amber-50 text-xs sm:text-sm font-medium truncate">
-                    Nueva actualización IA - 20 Feb 2026, 3:00 PM
-                  </p>
+            <div className="max-w-5xl mx-auto px-4 py-2.5 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2.5">
+                <div className="w-5 h-5 rounded-full bg-amber-400 flex items-center justify-center flex-shrink-0">
+                  <span className="text-xs">🔧</span>
                 </div>
-                
-                <motion.div
-                  animate={{ scale: [1, 1.2, 1] }}
-                  transition={{ duration: 1.5, repeat: Infinity }}
-                  className="w-6 h-6 sm:w-8 sm:h-8 flex-shrink-0"
-                >
-                  <span className="text-xl sm:text-2xl">✨</span>
-                </motion.div>
-
-                <button
-                  onClick={() => setShowMaintenance(false)}
-                  className="w-6 h-6 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center flex-shrink-0 transition-colors"
-                >
-                  <span className="text-white text-sm font-bold">✕</span>
-                </button>
+                <p className="text-sm text-amber-900 font-medium">
+                  Mantenimiento programado: <span className="font-semibold">20 Feb 2026, 3:00 PM</span> · Nueva actualización IA
+                </p>
               </div>
-            </motion.div>
+              
+              <button
+                onClick={() => setShowMaintenance(false)}
+                className="w-5 h-5 rounded hover:bg-amber-200 flex items-center justify-center flex-shrink-0 transition-colors text-amber-700 hover:text-amber-900"
+              >
+                <span className="text-sm">✕</span>
+              </button>
+            </div>
           </motion.div>
         )}
         {children}
