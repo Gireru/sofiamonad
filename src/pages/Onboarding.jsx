@@ -261,58 +261,6 @@ export default function Onboarding() {
         />
       </div>
 
-      {/* Maintenance Banner */}
-      <motion.div
-        initial={{ y: -100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ delay: 0.5, type: "spring", stiffness: 100 }}
-        className="absolute top-4 left-1/2 -translate-x-1/2 z-50 w-full max-w-2xl px-4"
-      >
-        <motion.div
-          animate={{ 
-            scale: [1, 1.02, 1],
-            boxShadow: [
-              "0 10px 30px rgba(245, 158, 11, 0.3)",
-              "0 15px 40px rgba(245, 158, 11, 0.5)",
-              "0 10px 30px rgba(245, 158, 11, 0.3)"
-            ]
-          }}
-          transition={{ duration: 2, repeat: Infinity }}
-          className="bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500 rounded-2xl p-4 border-2 border-amber-300 shadow-2xl"
-        >
-          <div className="flex items-center gap-3">
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-              className="w-10 h-10 flex-shrink-0"
-            >
-              <span className="text-3xl">🔧</span>
-            </motion.div>
-
-            <div className="flex-1">
-              <motion.p
-                animate={{ opacity: [1, 0.7, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="font-black text-white text-sm sm:text-base"
-              >
-                ⚡ MANTENIMIENTO PROGRAMADO ⚡
-              </motion.p>
-              <p className="text-amber-50 text-xs sm:text-sm font-medium">
-                Nueva actualización IA - 20 Febrero 2026, 3:00 PM
-              </p>
-            </div>
-
-            <motion.div
-              animate={{ scale: [1, 1.2, 1] }}
-              transition={{ duration: 1.5, repeat: Infinity }}
-              className="w-8 h-8 flex-shrink-0"
-            >
-              <span className="text-2xl">✨</span>
-            </motion.div>
-          </div>
-        </motion.div>
-      </motion.div>
-
       {/* Content */}
       <div className="flex flex-col items-center justify-center min-h-screen p-6 pt-12">
         <AnimatePresence mode="wait">
