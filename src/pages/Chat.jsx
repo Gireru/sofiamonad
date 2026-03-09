@@ -635,6 +635,16 @@ Pregunta del estudiante: ${message}\n\n${profile?.companion_name}:`;
 
           {/* Mode selector & Save */}
           <div className="flex gap-2">
+            {/* Botón Modo Voz */}
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => setVoiceModeOpen(true)}
+              className="px-3 py-2 rounded-xl flex items-center gap-2 text-sm font-medium bg-gradient-to-r from-violet-500 to-purple-600 text-white shadow-lg shadow-violet-500/30"
+            >
+              <Radio className="w-4 h-4" />
+              <span className="hidden sm:inline">Modo Voz</span>
+            </motion.button>
             {isGuestMode && (
               <div className="px-3 py-2 rounded-xl bg-gradient-to-r from-amber-100 to-orange-100 border border-amber-300 flex items-center gap-2">
                 <span className="text-sm font-bold text-amber-700">
