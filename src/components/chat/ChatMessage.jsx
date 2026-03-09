@@ -47,7 +47,10 @@ export default function ChatMessage({
               companionPersonality={companionPersonality}
               companionName={companionName}
               autoPlay={autoPlayVoice}
-              onPlayingChange={(playing) => setIsPlaying(playing)}
+              onPlayingChange={(playing) => {
+                setIsPlaying(playing);
+                if (onSpeakingChange) onSpeakingChange(playing);
+              }}
             />
           )}
         </div>
