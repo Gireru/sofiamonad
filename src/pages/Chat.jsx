@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { ArrowLeft, Sparkles, BookOpen, Palette, MessageCircle, Save, GraduationCap } from 'lucide-react';
+import { ArrowLeft, Sparkles, BookOpen, Palette, MessageCircle, Save, GraduationCap, Radio } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
