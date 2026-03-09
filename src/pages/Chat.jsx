@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { ArrowLeft, Sparkles, BookOpen, Palette, MessageCircle, Save, GraduationCap, Radio } from 'lucide-react';
+import { ArrowLeft, Sparkles, BookOpen, Palette, MessageCircle, Save, GraduationCap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
@@ -11,7 +11,6 @@ import ChatMessage from '@/components/chat/ChatMessage';
 import ChatInput from '@/components/chat/ChatInput';
 import ThinkingIndicator from '@/components/chat/ThinkingIndicator';
 import Avatar3D from '@/components/avatars/Avatar3D';
-import VoiceMode from '@/components/chat/VoiceMode';
 
 const modes = {
   tutor: { 
@@ -56,8 +55,6 @@ export default function Chat() {
   const [guestQuestionCount, setGuestQuestionCount] = useState(0);
   const [homeworkMode, setHomeworkMode] = useState(false);
   const [uploadedImage, setUploadedImage] = useState(null);
-  const [voiceModeOpen, setVoiceModeOpen] = useState(false);
-  const voiceCallbackRef = useRef(null);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -354,12 +351,7 @@ PERSONALIDAD BASE:
     }
   };
 
-  const handleVoiceSend = async (message, callback) => {
-    voiceCallbackRef.current = callback;
-    await handleSend(message, true);
-  };
-
-  const handleSend = async (message, fromVoice = false) => {
+  const handleSend = async (message) => {
     // Verificar límite en modo invitado
     if (isGuestMode && guestQuestionCount >= 3) {
       toast.error('¡Se acabó tu prueba gratuita! 🎉', {
@@ -445,12 +437,6 @@ Pregunta del estudiante: ${message}\n\n${profile?.companion_name}:`;
 
         const assistantMessage = { role: 'assistant', content: aiResponse };
         setMessages(prev => [...prev, assistantMessage]);
-
-        // Si estamos en modo voz, enviar respuesta al callback para que la lea en voz alta
-        if (voiceCallbackRef.current) {
-          voiceCallbackRef.current(aiResponse);
-          voiceCallbackRef.current = null;
-        }
         
         // Limpiar imagen después de usarla
         if (uploadedImage && homeworkMode) {
@@ -635,16 +621,6 @@ Pregunta del estudiante: ${message}\n\n${profile?.companion_name}:`;
 
           {/* Mode selector & Save */}
           <div className="flex gap-2">
-            {/* Botón Modo Voz */}
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setVoiceModeOpen(true)}
-              className="px-3 py-2 rounded-xl flex items-center gap-2 text-sm font-medium bg-gradient-to-r from-violet-500 to-purple-600 text-white shadow-lg shadow-violet-500/30"
-            >
-              <Radio className="w-4 h-4" />
-              <span className="hidden sm:inline">Modo Voz</span>
-            </motion.button>
             {isGuestMode && (
               <div className="px-3 py-2 rounded-xl bg-gradient-to-r from-amber-100 to-orange-100 border border-amber-300 flex items-center gap-2">
                 <span className="text-sm font-bold text-amber-700">
@@ -794,18 +770,6 @@ Pregunta del estudiante: ${message}\n\n${profile?.companion_name}:`;
           <div ref={messagesEndRef} />
         </div>
       </main>
-
-      {/* Voice Mode Overlay */}
-      <AnimatePresence>
-        {voiceModeOpen && (
-          <VoiceMode
-            profile={profile}
-            onSend={handleVoiceSend}
-            isThinking={isThinking}
-            onClose={() => setVoiceModeOpen(false)}
-          />
-        )}
-      </AnimatePresence>
 
       {/* Input */}
       <div className="relative">
