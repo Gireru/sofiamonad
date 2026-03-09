@@ -11,6 +11,7 @@ import ChatMessage from '@/components/chat/ChatMessage';
 import ChatInput from '@/components/chat/ChatInput';
 import ThinkingIndicator from '@/components/chat/ThinkingIndicator';
 import Avatar3D from '@/components/avatars/Avatar3D';
+import VoiceMode from '@/components/chat/VoiceMode';
 
 const modes = {
   tutor: { 
