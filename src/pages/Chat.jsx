@@ -48,7 +48,8 @@ export default function Chat() {
   const [isListening, setIsListening] = useState(false);
   const [currentMode, setCurrentMode] = useState('tutor');
   const [avatarState, setAvatarState] = useState('idle');
-  const [autoPlayVoice, setAutoPlayVoice] = useState(false);
+  const [autoPlayVoice, setAutoPlayVoice] = useState(true);
+  const [isAISpeaking, setIsAISpeaking] = useState(false);
   const [currentConversationId, setCurrentConversationId] = useState(null);
   const [needsManualSave, setNeedsManualSave] = useState(false);
   const [isGuestMode, setIsGuestMode] = useState(false);

@@ -47,7 +47,6 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
-import Chat from './pages/Chat';
 import Dashboard from './pages/Dashboard';
 import History from './pages/History';
 import Home from './pages/Home';
@@ -59,11 +58,11 @@ import Settings from './pages/Settings';
 import Shop from './pages/Shop';
 import TeacherDashboard from './pages/TeacherDashboard';
 import TeacherLogin from './pages/TeacherLogin';
+import Chat from './pages/Chat';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
-    "Chat": Chat,
     "Dashboard": Dashboard,
     "History": History,
     "Home": Home,
@@ -75,6 +74,7 @@ export const PAGES = {
     "Shop": Shop,
     "TeacherDashboard": TeacherDashboard,
     "TeacherLogin": TeacherLogin,
+    "Chat": Chat,
 }
 
 export const pagesConfig = {
