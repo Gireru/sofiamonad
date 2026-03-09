@@ -783,9 +783,8 @@ Pregunta del estudiante: ${message}\n\n${profile?.companion_name}:`;
         
         <ChatInput
           onSend={handleSend}
-          onVoiceToggle={toggleVoice}
-          isListening={isListening}
           disabled={isThinking}
+          isAISpeaking={isAISpeaking}
           placeholder={homeworkMode && uploadedImage ? "¿Qué parte necesitas resolver?" : `Escribe a ${profile.companion_name}...`}
         />
       </div>
