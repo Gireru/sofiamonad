@@ -431,7 +431,7 @@ Pregunta del estudiante: ${message}\n\n${profile?.companion_name}:`;
 
         const aiResponse = await base44.integrations.Core.InvokeLLM({
           prompt: fullPrompt,
-          add_context_from_internet: currentMode === 'tutor',
+          add_context_from_internet: false,
           file_urls: uploadedImage && homeworkMode ? [uploadedImage] : undefined
         });
 
