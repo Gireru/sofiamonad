@@ -131,14 +131,8 @@ export default function Chat() {
         const isAutoSave = gradeNumber >= 1 && gradeNumber <= 3 && isPrimary;
         setNeedsManualSave(!isAutoSave);
         
-        // Verificar configuración del usuario (por defecto true para Nivel 1)
-        const userPreference = localStorage.getItem('sofia_autoplay_voice');
-        if (userPreference !== null) {
-          setAutoPlayVoice(userPreference === 'true');
-        } else {
-          setAutoPlayVoice(shouldAutoPlay);
-          localStorage.setItem('sofia_autoplay_voice', shouldAutoPlay.toString());
-        }
+        // Voz siempre activa para modo conversación
+        setAutoPlayVoice(true);
 
         // Welcome message
         if (homeworkMode) {
