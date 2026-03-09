@@ -795,6 +795,18 @@ Pregunta del estudiante: ${message}\n\n${profile?.companion_name}:`;
         </div>
       </main>
 
+      {/* Voice Mode Overlay */}
+      <AnimatePresence>
+        {voiceModeOpen && (
+          <VoiceMode
+            profile={profile}
+            onSend={handleVoiceSend}
+            isThinking={isThinking}
+            onClose={() => setVoiceModeOpen(false)}
+          />
+        )}
+      </AnimatePresence>
+
       {/* Input */}
       <div className="relative">
         {homeworkMode && !uploadedImage && (
