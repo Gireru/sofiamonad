@@ -39,6 +39,15 @@ export default function VoiceButton({
   }, [text, autoPlay, voicesLoaded]);
 
   useEffect(() => {
+    // Detener la voz cuando el componente se desmonta (al salir del chat)
+    return () => {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+      }
+    };
+  }, []);
+
+  useEffect(() => {
     if (onPlayingChange) {
       onPlayingChange(isPlaying);
     }
