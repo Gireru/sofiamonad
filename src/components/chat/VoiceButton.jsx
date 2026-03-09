@@ -156,8 +156,7 @@ export default function VoiceButton({
       };
 
       // Simular highlight palabra por palabra
-      // Como boundary no está disponible en todos los navegadores, usamos un aproximado
-      const words = text.split(' ');
+      const words = cleanText.split(' ');
       const avgWordDuration = (text.length / words.length) * 100; // ms aproximado por palabra
       
       let wordIndex = 0;
