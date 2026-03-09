@@ -44,12 +44,37 @@ export default function VoiceButton({
     }
   }, [isPlaying, onPlayingChange]);
 
+  // Eliminar emojis y caracteres especiales del texto antes de leerlo
+  const cleanTextForSpeech = (rawText) => {
+    return rawText
+      .replace(/[\u{1F600}-\u{1F64F}]/gu, '')  // Emoticons
+      .replace(/[\u{1F300}-\u{1F5FF}]/gu, '')  // Misc symbols & pictographs
+      .replace(/[\u{1F680}-\u{1F6FF}]/gu, '')  // Transport & map
+      .replace(/[\u{1F700}-\u{1F77F}]/gu, '')  // Alchemical symbols
+      .replace(/[\u{1F780}-\u{1F7FF}]/gu, '')  // Geometric shapes
+      .replace(/[\u{1F800}-\u{1F8FF}]/gu, '')  // Supplemental arrows
+      .replace(/[\u{1F900}-\u{1F9FF}]/gu, '')  // Supplemental symbols
+      .replace(/[\u{1FA00}-\u{1FA6F}]/gu, '')  // Chess symbols
+      .replace(/[\u{1FA70}-\u{1FAFF}]/gu, '')  // Symbols and pictographs extended
+      .replace(/[\u{2600}-\u{26FF}]/gu, '')    // Misc symbols
+      .replace(/[\u{2700}-\u{27BF}]/gu, '')    // Dingbats
+      .replace(/[\u{FE00}-\u{FE0F}]/gu, '')    // Variation selectors
+      .replace(/[\u{1F1E0}-\u{1F1FF}]/gu, '')  // Flags
+      .replace(/\*\*/g, '')                     // Markdown bold
+      .replace(/\*/g, '')                       // Markdown italic
+      .replace(/_/g, ' ')                       // Markdown underline
+      .replace(/#+\s/g, '')                     // Markdown headers
+      .replace(/\s+/g, ' ')                     // Multiple spaces
+      .trim();
+  };
+
   const speak = () => {
     if ('speechSynthesis' in window) {
       // Cancelar cualquier lectura previa
       window.speechSynthesis.cancel();
 
-      const utterance = new SpeechSynthesisUtterance(text);
+      const cleanText = cleanTextForSpeech(text);
+      const utterance = new SpeechSynthesisUtterance(cleanText);
       utteranceRef.current = utterance;
 
       // Cargar preferencias de usuario
