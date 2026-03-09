@@ -752,6 +752,7 @@ Pregunta del estudiante: ${message}\n\n${profile?.companion_name}:`;
                 image={msg.image}
                 companionPersonality={profile.companion_personality}
                 autoPlayVoice={autoPlayVoice && msg.role === 'assistant' && i === messages.length - 1}
+                onSpeakingChange={msg.role === 'assistant' && i === messages.length - 1 ? setIsAISpeaking : undefined}
               />
             ))}
             
