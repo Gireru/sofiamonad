@@ -445,6 +445,12 @@ Pregunta del estudiante: ${message}\n\n${profile?.companion_name}:`;
 
         const assistantMessage = { role: 'assistant', content: aiResponse };
         setMessages(prev => [...prev, assistantMessage]);
+
+        // Si estamos en modo voz, enviar respuesta al callback para que la lea en voz alta
+        if (voiceCallbackRef.current) {
+          voiceCallbackRef.current(aiResponse);
+          voiceCallbackRef.current = null;
+        }
         
         // Limpiar imagen después de usarla
         if (uploadedImage && homeworkMode) {
