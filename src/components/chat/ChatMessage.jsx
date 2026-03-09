@@ -12,7 +12,8 @@ export default function ChatMessage({
   userName = 'Tú',
   image = null,
   companionPersonality = 'lia',
-  autoPlayVoice = false
+  autoPlayVoice = false,
+  onSpeakingChange = null
 }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentWordIndex, setCurrentWordIndex] = useState(-1);
