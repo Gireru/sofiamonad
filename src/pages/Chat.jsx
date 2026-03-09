@@ -56,6 +56,8 @@ export default function Chat() {
   const [guestQuestionCount, setGuestQuestionCount] = useState(0);
   const [homeworkMode, setHomeworkMode] = useState(false);
   const [uploadedImage, setUploadedImage] = useState(null);
+  const [voiceModeOpen, setVoiceModeOpen] = useState(false);
+  const voiceCallbackRef = useRef(null);
   const fileInputRef = useRef(null);
 
   useEffect(() => {
