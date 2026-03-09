@@ -354,7 +354,12 @@ PERSONALIDAD BASE:
     }
   };
 
-  const handleSend = async (message) => {
+  const handleVoiceSend = async (message, callback) => {
+    voiceCallbackRef.current = callback;
+    await handleSend(message, true);
+  };
+
+  const handleSend = async (message, fromVoice = false) => {
     // Verificar límite en modo invitado
     if (isGuestMode && guestQuestionCount >= 3) {
       toast.error('¡Se acabó tu prueba gratuita! 🎉', {
