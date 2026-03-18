@@ -395,24 +395,10 @@ PERSONALIDAD BASE:
       );
 
       if (requestsImage) {
-        // Generar imagen educativa
-        setMessages(prev => [...prev, { 
-          role: 'assistant', 
-          content: `¡Perfecto! Voy a crear un dibujo para ti... 🎨✨` 
-        }]);
-
-        const imagePrompt = `Educational illustration, 3D Render, Pixar style, colorful and child-friendly, warm lighting, high quality: ${message}. 
-Negative prompt: violence, scary, dark, photorealistic, adult content, weapons, blood`;
-
-        const { url } = await base44.integrations.Core.GenerateImage({
-          prompt: imagePrompt
-        });
-
-        setMessages(prev => [...prev, { 
-          role: 'assistant', 
-          content: `¡Aquí está! 🎉`,
-          image: url
-        }]);
+        // En modo offline, responder con descripción en vez de imagen
+        const descPrompt = `El estudiante pidió un dibujo o imagen sobre: "${message}". Como no puedes generar imágenes en modo offline, describe la imagen de forma muy visual y detallada usando palabras, emojis y entusiasmo. Mantén el nivel apropiado para ${profile?.display_name}.`;
+        const desc = await generateLocal(getSystemPrompt(), messages, descPrompt);
+        setMessages(prev => [...prev, { role: 'assistant', content: desc }]);
       } else {
         // Respuesta normal del LLM
         let fullPrompt = `${getSystemPrompt()}\n\nHistorial de conversación:\n${messages.map(m => `${m.role === 'user' ? profile?.display_name : profile?.companion_name}: ${m.content}`).join('\n')}\n\n${profile?.display_name}: ${message}\n\n${profile?.companion_name}:`;
