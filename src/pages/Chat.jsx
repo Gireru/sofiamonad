@@ -93,8 +93,7 @@ export default function Chat() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isThinking]);
 
-  // Auto-cargar si ya fue descargado antes
-  useEffect(() => { autoLoad(); }, []);
+
 
   const loadProfile = async () => {
     try {
