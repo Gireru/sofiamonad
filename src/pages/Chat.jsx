@@ -11,7 +11,7 @@ import ChatMessage from '@/components/chat/ChatMessage';
 import ChatInput from '@/components/chat/ChatInput';
 import ThinkingIndicator from '@/components/chat/ThinkingIndicator';
 import Avatar3D from '@/components/avatars/Avatar3D';
-import LocalLLMButton from '@/components/chat/LocalLLMButton';
+import LLMLoadingScreen from '@/components/chat/LLMLoadingScreen';
 import { useLocalLLM } from '@/hooks/useLocalLLM';
 
 const modes = {
