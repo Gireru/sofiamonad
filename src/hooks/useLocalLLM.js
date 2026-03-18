@@ -1,22 +1,24 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 
 const MODEL_ID = 'gemma-2-2b-it-q4f16_1-MLC';
 const STORAGE_KEY = 'sofia_local_llm_ready';
 
 export function useLocalLLM() {
-  const [status, setStatus] = useState(() => {
-    // Check if previously downloaded (cached in IndexedDB by WebLLM)
-    return localStorage.getItem(STORAGE_KEY) === 'true' ? 'loading' : 'idle';
-  });
+  const [status, setStatus] = useState('idle'); // idle | downloading | loading | ready | error
   const [progress, setProgress] = useState(0);
   const [progressText, setProgressText] = useState('');
   const engineRef = useRef(null);
+  const initStarted = useRef(false);
 
   const initEngine = useCallback(async () => {
+    if (initStarted.current) return;
+    initStarted.current = true;
+
     try {
       const { CreateMLCEngine } = await import('@mlc-ai/web-llm');
-      
-      setStatus('downloading');
+
+      const alreadyDownloaded = localStorage.getItem(STORAGE_KEY) === 'true';
+      setStatus(alreadyDownloaded ? 'loading' : 'downloading');
       setProgress(0);
 
       const engine = await CreateMLCEngine(MODEL_ID, {
@@ -35,28 +37,26 @@ export function useLocalLLM() {
       console.error('WebLLM error:', err);
       localStorage.removeItem(STORAGE_KEY);
       setStatus('error');
+      initStarted.current = false;
     }
   }, []);
 
-  const download = useCallback(() => {
-    if (status === 'idle' || status === 'error') {
-      initEngine();
-    }
-  }, [status, initEngine]);
+  // Auto-arrancar siempre al montar
+  useEffect(() => {
+    initEngine();
+  }, []);
 
-  // Auto-load if was previously downloaded
-  const autoLoad = useCallback(() => {
-    if (status === 'loading') {
-      initEngine();
-    }
-  }, [status, initEngine]);
+  const retry = useCallback(() => {
+    initStarted.current = false;
+    initEngine();
+  }, [initEngine]);
 
   const generate = useCallback(async (systemPrompt, conversationHistory, userMessage) => {
     if (!engineRef.current) return null;
-    
+
     const chatMessages = [
       { role: 'system', content: systemPrompt },
-      ...conversationHistory.slice(-6).map(m => ({
+      ...conversationHistory.slice(-8).map(m => ({
         role: m.role,
         content: m.content
       })),
@@ -66,11 +66,11 @@ export function useLocalLLM() {
     const reply = await engineRef.current.chat.completions.create({
       messages: chatMessages,
       temperature: 0.7,
-      max_tokens: 300,
+      max_tokens: 400,
     });
 
     return reply.choices[0].message.content;
   }, []);
 
-  return { status, progress, progressText, download, autoLoad, generate };
+  return { status, progress, progressText, retry, generate };
 }
