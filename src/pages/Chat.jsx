@@ -59,6 +59,7 @@ export default function Chat() {
   const [homeworkMode, setHomeworkMode] = useState(false);
   const [uploadedImage, setUploadedImage] = useState(null);
   const fileInputRef = useRef(null);
+  const { status: llmStatus, progress: llmProgress, progressText: llmProgressText, download: downloadLLM, autoLoad, generate: generateLocal } = useLocalLLM();
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
