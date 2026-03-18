@@ -429,18 +429,8 @@ El estudiante ha subido una foto de su tarea. Debes:
 Pregunta del estudiante: ${message}\n\n${profile?.companion_name}:`;
         }
 
-        let aiResponse;
-        if (llmStatus === 'ready' && !(uploadedImage && homeworkMode)) {
-          // Usar Gemma 2 local
-          aiResponse = await generateLocal(getSystemPrompt(), messages, message);
-        } else {
-          // Usar LLM en la nube
-          aiResponse = await base44.integrations.Core.InvokeLLM({
-            prompt: fullPrompt,
-            add_context_from_internet: false,
-            file_urls: uploadedImage && homeworkMode ? [uploadedImage] : undefined
-          });
-        }
+        // Usar siempre Gemma 2 local (modo offline)
+        const aiResponse = await generateLocal(getSystemPrompt(), messages, message);
 
         const assistantMessage = { role: 'assistant', content: aiResponse };
         setMessages(prev => [...prev, assistantMessage]);
