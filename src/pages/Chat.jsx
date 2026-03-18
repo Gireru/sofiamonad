@@ -628,7 +628,7 @@ Pregunta del estudiante: ${message}\n\n${profile?.companion_name}:`;
           </div>
 
           {/* Mode selector & Save */}
-          <div className="flex gap-2">
+          <div className="flex gap-2 items-center flex-wrap justify-end">
             {isGuestMode && (
               <div className="px-3 py-2 rounded-xl bg-gradient-to-r from-amber-100 to-orange-100 border border-amber-300 flex items-center gap-2">
                 <span className="text-sm font-bold text-amber-700">
