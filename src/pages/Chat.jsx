@@ -576,6 +576,18 @@ Pregunta del estudiante: ${message}\n\n${profile?.companion_name}:`;
     setAvatarState(isListening ? 'idle' : 'listening');
   };
 
+  // Mostrar pantalla de carga del LLM hasta que esté listo
+  if (llmStatus !== 'ready') {
+    return (
+      <LLMLoadingScreen
+        status={llmStatus}
+        progress={llmProgress}
+        progressText={llmProgressText}
+        onRetry={retryLLM}
+      />
+    );
+  }
+
   if (!profile) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-sky-100 via-blue-50 to-indigo-100 flex items-center justify-center">
