@@ -16,8 +16,6 @@ export function useLocalLLM() {
     initStarted.current = true;
 
     try {
-      const { CreateMLCEngine } = await import('@mlc-ai/web-llm');
-
       const alreadyDownloaded = localStorage.getItem(STORAGE_KEY) === 'true';
       setStatus(alreadyDownloaded ? 'loading' : 'downloading');
       setProgress(0);
