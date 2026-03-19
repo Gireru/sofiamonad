@@ -1,4 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
+import { CreateMLCEngine } from '@mlc-ai/web-llm';
 
 const MODEL_ID = 'gemma-2-2b-it-q4f16_1-MLC';
 const STORAGE_KEY = 'sofia_local_llm_ready';
