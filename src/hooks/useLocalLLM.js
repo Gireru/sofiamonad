@@ -93,16 +93,19 @@ export function useLocalLLM() {
   }, [initEngine]);
 
   const generate = useCallback(async (systemPrompt, conversationHistory, userMessage) => {
+    // Combinar prompt base de seguridad + prompt específico del perfil
+    const fullSystem = `${BASE_SYSTEM_PROMPT}\n\n---\nCONTEXTO ESPECÍFICO DE ESTA SESIÓN:\n${systemPrompt}`;
+
     // Sin motor local → usar nube
     if (!pipelineRef.current) {
       const response = await base44.integrations.Core.InvokeLLM({
-        prompt: `${systemPrompt}\n\nHistorial reciente:\n${conversationHistory.slice(-6).map(m => `${m.role === 'user' ? 'Estudiante' : 'Sofia'}: ${m.content}`).join('\n')}\n\nEstudiante: ${userMessage}\n\nSofia:`,
+        prompt: `${fullSystem}\n\nHistorial reciente:\n${conversationHistory.slice(-6).map(m => `${m.role === 'user' ? 'Estudiante' : 'Sofia'}: ${m.content}`).join('\n')}\n\nEstudiante: ${userMessage}\n\nSofia:`,
       });
       return typeof response === 'string' ? response : response?.text || response?.response || String(response);
     }
 
     const messages = [
-      { role: 'system', content: systemPrompt },
+      { role: 'system', content: fullSystem },
       ...conversationHistory.slice(-8).map(m => ({ role: m.role, content: m.content })),
       { role: 'user', content: userMessage },
     ];
