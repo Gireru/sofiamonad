@@ -1,58 +1,53 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 
-const MODEL_ID = 'gemma-2-2b-it-q4f16_1-MLC';
-const STORAGE_KEY = 'sofia_local_llm_ready';
-
-function hasWebGPU() {
-  return typeof navigator !== 'undefined' && 'gpu' in navigator;
-}
+// Qwen2.5-0.5B: ~300MB cuantizado, funciona via WebAssembly en todos los dispositivos
+const MODEL_ID = 'onnx-community/Qwen2.5-0.5B-Instruct';
+const STORAGE_KEY = 'sofia_llm_downloaded_v2';
 
 export function useLocalLLM() {
-  const [status, setStatus] = useState('idle');
+  const [status, setStatus] = useState('idle'); // idle | downloading | loading | ready | error
   const [progress, setProgress] = useState(0);
   const [progressText, setProgressText] = useState('');
-  const engineRef = useRef(null);
-  const useCloudRef = useRef(false);
+  const pipelineRef = useRef(null);
   const initStarted = useRef(false);
 
   const initEngine = useCallback(async () => {
     if (initStarted.current) return;
     initStarted.current = true;
 
-    // Si no hay WebGPU (Android, iOS, navegadores sin soporte), usar nube directamente
-    if (!hasWebGPU()) {
-      useCloudRef.current = true;
-      setStatus('ready');
-      setProgress(100);
-      setProgressText('Usando IA en la nube');
-      return;
-    }
+    const alreadyDownloaded = localStorage.getItem(STORAGE_KEY) === 'true';
+    setStatus(alreadyDownloaded ? 'loading' : 'downloading');
+    setProgress(0);
 
     try {
-      const alreadyDownloaded = localStorage.getItem(STORAGE_KEY) === 'true';
-      setStatus(alreadyDownloaded ? 'loading' : 'downloading');
-      setProgress(0);
+      const { pipeline } = await import('@huggingface/transformers');
 
-      const { CreateMLCEngine } = await import('@mlc-ai/web-llm');
-
-      const engine = await CreateMLCEngine(MODEL_ID, {
-        initProgressCallback: (report) => {
-          const pct = Math.round(report.progress * 100);
-          setProgress(pct);
-          setProgressText(report.text || `Cargando... ${pct}%`);
-        }
+      const generator = await pipeline('text-generation', MODEL_ID, {
+        dtype: 'q4',
+        progress_callback: (info) => {
+          if (info.status === 'progress' && info.total > 0) {
+            const pct = Math.round((info.loaded / info.total) * 100);
+            setProgress(pct);
+            setProgressText(`Descargando modelo... ${pct}%`);
+          } else if (info.status === 'ready') {
+            setStatus('loading');
+            setProgressText('Iniciando Sofia...');
+            setProgress(95);
+          }
+        },
       });
 
-      engineRef.current = engine;
+      pipelineRef.current = generator;
       localStorage.setItem(STORAGE_KEY, 'true');
       setStatus('ready');
       setProgress(100);
+      setProgressText('¡Lista!');
     } catch (err) {
-      console.error('WebLLM error, fallback a nube:', err);
+      console.error('LLM local falló, usando nube:', err);
       localStorage.removeItem(STORAGE_KEY);
-      // Fallback a nube si falla la carga local
-      useCloudRef.current = true;
+      // Fallback silencioso a la nube
+      pipelineRef.current = null;
       setStatus('ready');
       setProgress(100);
       setProgressText('Usando IA en la nube');
@@ -65,37 +60,35 @@ export function useLocalLLM() {
 
   const retry = useCallback(() => {
     initStarted.current = false;
-    useCloudRef.current = false;
-    engineRef.current = null;
+    pipelineRef.current = null;
+    localStorage.removeItem(STORAGE_KEY);
     setStatus('idle');
+    setProgress(0);
     initEngine();
   }, [initEngine]);
 
   const generate = useCallback(async (systemPrompt, conversationHistory, userMessage) => {
-    // Usar IA en la nube si no hay motor local
-    if (!engineRef.current || useCloudRef.current) {
+    // Sin motor local → usar nube
+    if (!pipelineRef.current) {
       const response = await base44.integrations.Core.InvokeLLM({
         prompt: `${systemPrompt}\n\nHistorial reciente:\n${conversationHistory.slice(-6).map(m => `${m.role === 'user' ? 'Estudiante' : 'Sofia'}: ${m.content}`).join('\n')}\n\nEstudiante: ${userMessage}\n\nSofia:`,
       });
-      return typeof response === 'string' ? response : response?.text || response?.response || '';
+      return typeof response === 'string' ? response : response?.text || response?.response || String(response);
     }
 
-    const chatMessages = [
+    const messages = [
       { role: 'system', content: systemPrompt },
-      ...conversationHistory.slice(-8).map(m => ({
-        role: m.role,
-        content: m.content
-      })),
-      { role: 'user', content: userMessage }
+      ...conversationHistory.slice(-8).map(m => ({ role: m.role, content: m.content })),
+      { role: 'user', content: userMessage },
     ];
 
-    const reply = await engineRef.current.chat.completions.create({
-      messages: chatMessages,
+    const output = await pipelineRef.current(messages, {
+      max_new_tokens: 400,
       temperature: 0.7,
-      max_tokens: 400,
+      do_sample: true,
     });
 
-    return reply.choices[0].message.content;
+    return output[0].generated_text.at(-1).content;
   }, []);
 
   return { status, progress, progressText, retry, generate };
