@@ -1,0 +1,31 @@
+{
+  "name": "Mission",
+  "type": "object",
+  "properties": {
+    "teacher_email": {
+      "type": "string"
+    },
+    "text": {
+      "type": "string",
+      "description": "Texto de la misi\u00f3n enviada"
+    },
+    "student_ids": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "IDs de los alumnos a quienes se envi\u00f3"
+    },
+    "student_count": {
+      "type": "number",
+      "default": 0
+    },
+    "classroom_id": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "teacher_email",
+    "text"
+  ]
+}

@@ -11,16 +11,19 @@ import { toast } from 'sonner';
 import ClassGrid from '@/components/teacher/ClassGrid';
 import AcademicAlerts from '@/components/teacher/AcademicAlerts';
 import MissionBroadcast from '@/components/teacher/MissionBroadcast';
+import MissionHistory from '@/components/teacher/MissionHistory';
 
 export default function TeacherDashboard() {
   const navigate = useNavigate();
   const [tokenInput, setTokenInput] = useState('');
   const [linkedStudents, setLinkedStudents] = useState([]);
+  const [missions, setMissions] = useState([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     loadLinkedStudents();
+    loadMissions();
   }, []);
 
   const loadLinkedStudents = async () => {
@@ -96,11 +99,26 @@ export default function TeacherDashboard() {
     setLoading(false);
   };
 
+  const loadMissions = async () => {
+    try {
+      const user = await base44.auth.me();
+      const ms = await base44.entities.Mission.filter({ teacher_email: user.email }, '-created_date', 20);
+      setMissions(ms);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   const handleSendMission = async (missionText) => {
-    // En producción, esto crearía registros en una entidad Mission vinculados a los estudiantes
-    console.log('Sending mission to students:', missionText);
-    // Simulación de delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    const user = await base44.auth.me();
+    const studentIds = linkedStudents.map(s => s.id);
+    await base44.entities.Mission.create({
+      teacher_email: user.email,
+      text: missionText,
+      student_ids: studentIds,
+      student_count: linkedStudents.length,
+    });
+    loadMissions();
   };
 
   return (
@@ -186,6 +204,13 @@ export default function TeacherDashboard() {
             studentCount={linkedStudents.length}
             onSendMission={handleSendMission}
           />
+        )}
+
+        {/* Historial de Misiones */}
+        {missions.length > 0 && (
+          <div className="bg-white/70 backdrop-blur-sm border border-white/50 rounded-2xl p-5">
+            <MissionHistory missions={missions} />
+          </div>
         )}
 
         {linkedStudents.length === 0 && (
