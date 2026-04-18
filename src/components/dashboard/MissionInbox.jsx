@@ -13,10 +13,37 @@ export default function MissionInbox({ profile }) {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
-    if (!profile?.teacher_email) return;
-    base44.entities.Mission.filter({ teacher_email: profile.teacher_email }, '-created_date', 5)
-      .then(setMissions)
-      .catch(console.error);
+    if (!profile?.id) return;
+
+    const load = async () => {
+      try {
+        // Buscar el salón del alumno
+        const memberships = await base44.entities.ClassroomMember.filter({ student_id: profile.id });
+        if (memberships.length === 0) {
+          // Si no tiene salón, buscar misiones por teacher_email si existe
+          if (profile.teacher_email) {
+            const ms = await base44.entities.Mission.filter({ teacher_email: profile.teacher_email }, '-created_date', 5);
+            setMissions(ms);
+          }
+          return;
+        }
+        const classroomId = memberships[0].classroom_id;
+        const ms = await base44.entities.Mission.filter({ classroom_id: classroomId }, '-created_date', 5);
+        if (ms.length > 0) {
+          setMissions(ms);
+        } else {
+          // fallback: buscar por teacher_email del salón
+          const classrooms = await base44.entities.Classroom.filter({ id: classroomId });
+          if (classrooms.length > 0) {
+            const ms2 = await base44.entities.Mission.filter({ teacher_email: classrooms[0].teacher_email }, '-created_date', 5);
+            setMissions(ms2);
+          }
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    load();
   }, [profile]);
 
   if (missions.length === 0) return null;

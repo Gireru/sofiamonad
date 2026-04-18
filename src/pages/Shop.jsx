@@ -73,7 +73,7 @@ export default function Shop() {
 
   const handleBuy = async (item) => {
     if (!inventory || inventory.neuronas < item.cost) {
-      toast.error('No tienes suficientes Neuronas 🧠');
+      toast.error('No tienes suficientes Monads 🔷');
       return;
     }
 
@@ -151,9 +151,9 @@ export default function Shop() {
             </div>
 
             <div className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white px-4 py-2 rounded-full shadow-lg">
-              <Sparkles className="w-4 h-4" />
+              <img src="https://media.base44.com/images/public/69e3f8f663fc316a299cbdbd/453ae61fd_image.png" alt="Monad" className="w-5 h-5 object-contain" />
               <span className="font-bold">{inventory.neuronas}</span>
-              <span className="text-sm">🧠 Neuronas</span>
+              <span className="text-sm">Monads</span>
             </div>
           </div>
         </div>
@@ -214,12 +214,15 @@ export default function Shop() {
 
         {/* How to earn */}
         <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-2xl p-6 border border-blue-200">
-          <h3 className="font-bold text-slate-800 mb-3">¿Cómo ganar Neuronas? 🧠</h3>
+          <div className="flex items-center gap-2 mb-3">
+            <img src="https://media.base44.com/images/public/69e3f8f663fc316a299cbdbd/453ae61fd_image.png" alt="Monad" className="w-5 h-5 object-contain" />
+            <h3 className="font-bold text-slate-800">¿Cómo ganar Monads?</h3>
+          </div>
           <div className="space-y-2 text-sm text-slate-600">
-            <p>• Estudiar 15 minutos seguidos: <strong>+10 🧠</strong></p>
-            <p>• Hacer preguntas complejas: <strong>+5 🧠</strong></p>
-            <p>• Completar tu racha diaria: <strong>+20 🧠</strong></p>
-            <p>• Sin faltas de ortografía: <strong>+3 🧠</strong></p>
+            <p>• Estudiar 15 minutos seguidos: <strong>+10 🔷</strong></p>
+            <p>• Hacer preguntas complejas: <strong>+5 🔷</strong></p>
+            <p>• Completar tu racha diaria: <strong>+20 🔷</strong></p>
+            <p>• Sin faltas de ortografía: <strong>+3 🔷</strong></p>
           </div>
         </div>
 
