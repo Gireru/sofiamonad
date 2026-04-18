@@ -12,6 +12,7 @@ import StatsCard from '@/components/dashboard/StatsCard';
 import QuickActions from '@/components/dashboard/QuickActions';
 import AchievementBadge from '@/components/dashboard/AchievementBadge';
 import MissionInbox from '@/components/dashboard/MissionInbox';
+import MonadCertifier from '@/components/dashboard/MonadCertifier';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -182,6 +183,19 @@ export default function Dashboard() {
             </h2>
             <QuickActions studentGrade={profile.grade} />
           </section>
+
+          {/* Mis Certificados Monad */}
+          <motion.section
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+            className="bg-white/70 backdrop-blur-lg rounded-3xl p-6 shadow-xl border border-white/50"
+          >
+            <h2 className="text-lg font-bold text-slate-700 mb-4 flex items-center gap-2">
+              🏆 Mis Certificados Monad
+            </h2>
+            <MonadCertifier />
+          </motion.section>
 
           {/* Tip of the day */}
           <motion.section
