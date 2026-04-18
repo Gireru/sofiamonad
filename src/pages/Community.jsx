@@ -98,7 +98,10 @@ export default function Community() {
             </Link>
             <div>
               <h1 className="font-bold text-slate-800 text-lg leading-tight">Comunidad Escolar</h1>
-              <p className="text-xs text-indigo-500 font-medium">⬡ En la red Monad</p>
+              <div className="flex items-center gap-1">
+                <img src="https://media.base44.com/images/public/69e3f8f663fc316a299cbdbd/7611a09b1_image.png" alt="Monad" className="w-3.5 h-3.5 rounded-sm" />
+                <p className="text-xs text-indigo-500 font-medium">En la red Monad</p>
+              </div>
             </div>
           </div>
           <Button
@@ -164,7 +167,7 @@ export default function Community() {
 
         {/* Blockchain badge */}
         <div className="flex items-center gap-2 bg-indigo-50 border border-indigo-200 rounded-xl px-4 py-2">
-          <span className="text-indigo-500 text-lg">⬡</span>
+          <img src="https://media.base44.com/images/public/69e3f8f663fc316a299cbdbd/7611a09b1_image.png" alt="Monad" className="w-5 h-5 rounded-md" />
           <p className="text-xs text-indigo-600">
             Las publicaciones se registran en la <strong>blockchain Monad</strong> para garantizar autenticidad.
           </p>
