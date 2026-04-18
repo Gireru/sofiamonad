@@ -11,7 +11,7 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import TeacherPanel from './pages/TeacherPanel';
 import TokenWallet from './pages/TokenWallet';
-import Community from './pages/Community';
+import Community from './pages/Community.jsx';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
