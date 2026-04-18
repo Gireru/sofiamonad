@@ -172,9 +172,6 @@ export default function Dashboard() {
             </div>
           </motion.section>
 
-          {/* Misiones del maestro */}
-          <MissionInbox profile={profile} />
-
           {/* Quick actions */}
           <section>
             <h2 className="text-lg font-bold text-slate-700 mb-4 flex items-center gap-2">
@@ -184,6 +181,9 @@ export default function Dashboard() {
           </section>
 
 
+
+          {/* Misiones */}
+          <MissionInbox profile={profile} />
 
           {/* Tip of the day */}
           <motion.section
