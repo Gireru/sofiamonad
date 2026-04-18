@@ -118,7 +118,7 @@ export default function Dashboard() {
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-sky-400 to-indigo-500 flex items-center justify-center shadow-lg">
               <span className="text-xl">✨</span>
             </div>
-            <span className="font-bold text-xl text-slate-800">Sofia</span>
+            <span className="font-bold text-xl text-slate-800">Sofia<span className="text-sky-500">.ia</span></span>
           </div>
           
           <div className="flex gap-2">
