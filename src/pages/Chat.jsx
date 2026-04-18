@@ -11,7 +11,6 @@ import ChatMessage from '@/components/chat/ChatMessage';
 import ChatInput from '@/components/chat/ChatInput';
 import ThinkingIndicator from '@/components/chat/ThinkingIndicator';
 import Avatar3D from '@/components/avatars/Avatar3D';
-import LLMLoadingScreen from '@/components/chat/LLMLoadingScreen';
 import { useLocalLLM } from '@/hooks/useLocalLLM';
 
 const modes = {
@@ -59,7 +58,7 @@ export default function Chat() {
   const [homeworkMode, setHomeworkMode] = useState(false);
   const [uploadedImage, setUploadedImage] = useState(null);
   const fileInputRef = useRef(null);
-  const { status: llmStatus, progress: llmProgress, progressText: llmProgressText, retry: retryLLM, generate: generateLocal } = useLocalLLM();
+  const { generate: generateLocal } = useLocalLLM();
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -561,18 +560,6 @@ Pregunta del estudiante: ${message}\n\n${profile?.companion_name}:`;
     setIsListening(!isListening);
     setAvatarState(isListening ? 'idle' : 'listening');
   };
-
-  // Mostrar pantalla de carga del LLM hasta que esté listo
-  if (llmStatus !== 'ready') {
-    return (
-      <LLMLoadingScreen
-        status={llmStatus}
-        progress={llmProgress}
-        progressText={llmProgressText}
-        onRetry={retryLLM}
-      />
-    );
-  }
 
   if (!profile) {
     return (
