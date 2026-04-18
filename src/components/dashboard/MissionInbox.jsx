@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
-import { Sparkles, MessageCircle, ArrowRight } from 'lucide-react';
+import { Sparkles, MessageCircle, ArrowRight, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import { format } from 'date-fns';
+import { format, isAfter, subHours } from 'date-fns';
 import { es } from 'date-fns/locale';
+import { toast } from 'sonner';
 
 // Palabras clave que indican que la misión es "chatear con la IA"
 const CHAT_KEYWORDS = ['platicar', 'chatear', 'hablar', 'conversar', 'pregunta', 'preguntale', 'pregúntale', 'ia', 'sofia', 'chat', 'tutor'];
@@ -50,14 +51,34 @@ export default function MissionInbox({ profile }) {
     load();
   }, [profile]);
 
-  if (missions.length === 0) return null;
+  // Filtrar misiones que no hayan expirado (12 horas)
+  const activeMissions = missions.filter(m => {
+    const created = new Date(m.created_date);
+    const expiry = new Date(created.getTime() + 12 * 60 * 60 * 1000);
+    return new Date() < expiry;
+  });
 
-  const handleAccept = (mission) => {
-    if (isChatMission(mission.text)) {
-      navigate(`/Chat?mission=${encodeURIComponent(mission.text)}`);
-    } else {
-      navigate(`/Chat?mission=${encodeURIComponent(mission.text)}`);
-    }
+  if (activeMissions.length === 0) return null;
+
+  const handleAccept = async (mission) => {
+    // Dar 50 Monads al aceptar la misión
+    try {
+      const user = await base44.auth.me();
+      const profiles = await base44.entities.StudentProfile.filter({ created_by: user.email });
+      if (profiles.length > 0) {
+        const invs = await base44.entities.StudentInventory.filter({ student_id: profiles[0].id });
+        if (invs.length > 0) {
+          await base44.entities.StudentInventory.update(invs[0].id, { neuronas: (invs[0].neuronas || 0) + 50 });
+          toast.success('¡+50 Monads por aceptar la misión! 🪙');
+        }
+      }
+    } catch (e) { console.error(e); }
+    navigate(`/Chat?mission=${encodeURIComponent(mission.text)}`);
+  };
+
+  const handleDelete = async (mission) => {
+    setMissions(prev => prev.filter(m => m.id !== mission.id));
+    toast.success('Misión eliminada');
   };
 
   return (
@@ -72,8 +93,11 @@ export default function MissionInbox({ profile }) {
       </div>
 
       <div className="space-y-3">
-        {missions.map((mission, i) => {
+        {activeMissions.map((mission, i) => {
           const isChat = isChatMission(mission.text);
+          const created = new Date(mission.created_date);
+          const expiry = new Date(created.getTime() + 12 * 60 * 60 * 1000);
+          const hoursLeft = Math.max(0, Math.round((expiry - new Date()) / 3600000));
           return (
             <motion.div
               key={mission.id}
@@ -104,39 +128,46 @@ export default function MissionInbox({ profile }) {
                   </p>
                 )}
                 <p className="text-slate-800 font-medium text-sm leading-snug">{mission.text}</p>
-                <div className="flex items-center gap-2 mt-1">
-                  <p className="text-xs text-slate-400">
-                    {format(new Date(mission.created_date), "d 'de' MMM", { locale: es })}
-                  </p>
+                <div className="flex items-center gap-2 mt-1 flex-wrap">
+                  <p className="text-xs text-slate-400">⏳ {hoursLeft}h restantes</p>
                   {isChat && (
                     <span className="text-xs bg-sky-100 text-sky-600 px-2 py-0.5 rounded-full font-medium flex items-center gap-1">
                       <MessageCircle className="w-3 h-3" /> Chat con Sofia
                     </span>
                   )}
-                  {/* Monads reward hint */}
                   <span className="text-xs bg-purple-100 text-purple-600 px-2 py-0.5 rounded-full font-medium flex items-center gap-1">
                     <img src="https://media.base44.com/images/public/69e3f8f663fc316a299cbdbd/453ae61fd_image.png" alt="Monad" className="w-3 h-3 object-contain" />
-                    Gana Monads
+                    +50 Monads
                   </span>
                 </div>
               </div>
 
-              {/* Botón */}
-              <Button
-                size="sm"
-                onClick={() => handleAccept(mission)}
-                className={`rounded-xl flex-shrink-0 gap-1 text-xs font-bold shadow ${
-                  i === 0
-                    ? 'bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white'
-                    : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
-                }`}
-              >
-                {i === 0 ? (
-                  <><Sparkles className="w-3 h-3" /> ¡Ir!</>
-                ) : (
-                  <ArrowRight className="w-4 h-4" />
-                )}
-              </Button>
+              {/* Botones */}
+              <div className="flex flex-col gap-1 flex-shrink-0">
+                <Button
+                  size="sm"
+                  onClick={() => handleAccept(mission)}
+                  className={`rounded-xl gap-1 text-xs font-bold shadow ${
+                    i === 0
+                      ? 'bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white'
+                      : 'bg-slate-100 hover:bg-slate-200 text-slate-700'
+                  }`}
+                >
+                  {i === 0 ? (
+                    <><Sparkles className="w-3 h-3" /> ¡Ir!</>
+                  ) : (
+                    <ArrowRight className="w-4 h-4" />
+                  )}
+                </Button>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => handleDelete(mission)}
+                  className="rounded-xl text-xs text-slate-400 hover:text-red-500 hover:bg-red-50 h-7"
+                >
+                  <Trash2 className="w-3 h-3" />
+                </Button>
+              </div>
             </motion.div>
           );
         })}

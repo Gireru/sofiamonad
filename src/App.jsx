@@ -11,6 +11,7 @@ import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import TeacherPanel from './pages/TeacherPanel';
 import TokenWallet from './pages/TokenWallet';
+import Community from './pages/Community';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -64,6 +65,7 @@ const AuthenticatedApp = () => {
       ))}
       <Route path="/TeacherPanel" element={<LayoutWrapper currentPageName="TeacherPanel"><TeacherPanel /></LayoutWrapper>} />
       <Route path="/TokenWallet" element={<LayoutWrapper currentPageName="TokenWallet"><TokenWallet /></LayoutWrapper>} />
+      <Route path="/Community" element={<LayoutWrapper currentPageName="Community"><Community /></LayoutWrapper>} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

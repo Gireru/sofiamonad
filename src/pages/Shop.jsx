@@ -12,22 +12,35 @@ import ShopItem from '@/components/gamification/ShopItem';
 
 const SHOP_CATALOG = [
   // Gorras
-  { item_id: 'hat_wizard', name: 'Gorro de Mago', type: 'hat', emoji: '🎩', cost: 50 },
-  { item_id: 'hat_graduation', name: 'Birrete', type: 'hat', emoji: '🎓', cost: 100 },
-  { item_id: 'hat_crown', name: 'Corona Real', type: 'hat', emoji: '👑', cost: 200 },
-  
+  { item_id: 'hat_wizard', name: 'Gorro de Mago', type: 'hat', emoji: '🎩', cost: 500 },
+  { item_id: 'hat_graduation', name: 'Birrete', type: 'hat', emoji: '🎓', cost: 800 },
+  { item_id: 'hat_crown', name: 'Corona Real', type: 'hat', emoji: '👑', cost: 1500 },
+
   // Lentes
-  { item_id: 'glasses_cool', name: 'Lentes Cool', type: 'glasses', emoji: '😎', cost: 75 },
-  { item_id: 'glasses_nerd', name: 'Lentes de Nerd', type: 'glasses', emoji: '🤓', cost: 75 },
-  
+  { item_id: 'glasses_cool', name: 'Lentes Cool', type: 'glasses', emoji: '😎', cost: 600 },
+  { item_id: 'glasses_nerd', name: 'Lentes de Nerd', type: 'glasses', emoji: '🤓', cost: 600 },
+
   // Fondos
-  { item_id: 'bg_space', name: 'Espacio', type: 'background', emoji: '🌌', cost: 150 },
-  { item_id: 'bg_rainbow', name: 'Arcoíris', type: 'background', emoji: '🌈', cost: 150 },
-  { item_id: 'bg_galaxy', name: 'Galaxia', type: 'background', emoji: '✨', cost: 250 },
-  
+  { item_id: 'bg_space', name: 'Espacio', type: 'background', emoji: '🌌', cost: 1200 },
+  { item_id: 'bg_rainbow', name: 'Arcoíris', type: 'background', emoji: '🌈', cost: 1200 },
+  { item_id: 'bg_galaxy', name: 'Galaxia', type: 'background', emoji: '✨', cost: 2000 },
+
   // Accesorios
-  { item_id: 'acc_book', name: 'Libro Mágico', type: 'accessory', emoji: '📚', cost: 100 },
-  { item_id: 'acc_trophy', name: 'Trofeo de Oro', type: 'accessory', emoji: '🏆', cost: 300 }
+  { item_id: 'acc_book', name: 'Libro Mágico', type: 'accessory', emoji: '📚', cost: 700 },
+  { item_id: 'acc_trophy', name: 'Trofeo de Oro', type: 'accessory', emoji: '🏆', cost: 2500 },
+
+  // Mochilas
+  { item_id: 'bag_explorer', name: 'Mochila Exploradora', type: 'bag', emoji: '🎒', cost: 1800 },
+  { item_id: 'bag_space', name: 'Mochila Espacial', type: 'bag', emoji: '🚀', cost: 3000 },
+  { item_id: 'bag_dragon', name: 'Mochila Dragón', type: 'bag', emoji: '🐉', cost: 5000 },
+  { item_id: 'bag_galaxy', name: 'Mochila Galaxia', type: 'bag', emoji: '🌌', cost: 7500 },
+
+  // Útiles
+  { item_id: 'tool_pencil', name: 'Lápiz Mágico', type: 'tool', emoji: '✏️', cost: 900 },
+  { item_id: 'tool_ruler', name: 'Regla de Diamante', type: 'tool', emoji: '📐', cost: 1100 },
+  { item_id: 'tool_compass', name: 'Compás de Oro', type: 'tool', emoji: '🧭', cost: 2200 },
+  { item_id: 'tool_calculator', name: 'Calculadora Pro', type: 'tool', emoji: '🔢', cost: 4000 },
+  { item_id: 'tool_microscope', name: 'Microscopio Elite', type: 'tool', emoji: '🔬', cost: 6000 }
 ];
 
 export default function Shop() {
@@ -183,13 +196,15 @@ export default function Shop() {
         </div>
 
         {/* Shop sections */}
-        {['hat', 'glasses', 'background', 'accessory'].map((category) => {
+        {['hat', 'glasses', 'background', 'accessory', 'bag', 'tool'].map((category) => {
           const categoryItems = SHOP_CATALOG.filter(item => item.type === category);
           const categoryNames = {
             hat: '🎩 Gorras',
             glasses: '🤓 Lentes',
             background: '🌈 Fondos',
-            accessory: '✨ Accesorios'
+            accessory: '✨ Accesorios',
+            bag: '🎒 Mochilas',
+            tool: '📐 Útiles Escolares'
           };
 
           return (
@@ -219,10 +234,10 @@ export default function Shop() {
             <h3 className="font-bold text-slate-800">¿Cómo ganar Monads?</h3>
           </div>
           <div className="space-y-2 text-sm text-slate-600">
+            <p>• Completar una misión del maestro: <strong>+50 🔷</strong></p>
+            <p>• Completar tu racha diaria: <strong>+20 🔷</strong></p>
             <p>• Estudiar 15 minutos seguidos: <strong>+10 🔷</strong></p>
             <p>• Hacer preguntas complejas: <strong>+5 🔷</strong></p>
-            <p>• Completar tu racha diaria: <strong>+20 🔷</strong></p>
-            <p>• Sin faltas de ortografía: <strong>+3 🔷</strong></p>
           </div>
         </div>
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { BookOpen, Palette, MessageCircle, Camera, ShoppingBag, Settings, GraduationCap } from 'lucide-react';
+import { BookOpen, Palette, MessageCircle, Camera, ShoppingBag, Settings, GraduationCap, Users } from 'lucide-react';
 
 const actions = [
   {
@@ -67,6 +67,15 @@ const actions = [
     gradient: 'from-slate-400 to-slate-500',
     page: 'Settings',
     params: ''
+  },
+  {
+    id: 'community',
+    icon: Users,
+    label: 'Comunidad Escolar',
+    description: 'Foro de tu escuela',
+    gradient: 'from-indigo-400 to-blue-500',
+    page: 'Community',
+    params: ''
   }
 ];
 
@@ -75,7 +84,7 @@ export default function QuickActions({ studentGrade }) {
   const isEarlyGrade = ['1_primaria', '2_primaria', '3_primaria'].includes(studentGrade);
   
   // Acciones básicas para 1° a 3° primaria
-  const basicActionsIds = ['tutor', 'exam', 'creative', 'free', 'shop'];
+  const basicActionsIds = ['tutor', 'exam', 'creative', 'free', 'shop', 'community'];
   
   // Filtrar acciones según el grado
   const filteredActions = isEarlyGrade 
