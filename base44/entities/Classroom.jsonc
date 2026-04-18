@@ -1,0 +1,61 @@
+{
+  "name": "Classroom",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "description": "Ej: 4to A, Grupo Azul"
+    },
+    "school": {
+      "type": "string"
+    },
+    "grade": {
+      "type": "string",
+      "enum": [
+        "1_primaria",
+        "2_primaria",
+        "3_primaria",
+        "4_primaria",
+        "5_primaria",
+        "6_primaria",
+        "1_secundaria",
+        "2_secundaria",
+        "3_secundaria"
+      ]
+    },
+    "teacher_email": {
+      "type": "string"
+    },
+    "join_code": {
+      "type": "string",
+      "description": "C\u00f3digo para unirse al sal\u00f3n"
+    },
+    "token_goal": {
+      "type": "number",
+      "default": 10000,
+      "description": "Meta grupal de tokens"
+    },
+    "current_tokens": {
+      "type": "number",
+      "default": 0,
+      "description": "Tokens acumulados del grupo"
+    },
+    "goal_reward": {
+      "type": "string",
+      "description": "Recompensa al llegar a la meta (ej: Excursi\u00f3n a Fundidora)"
+    },
+    "goal_reached": {
+      "type": "boolean",
+      "default": false
+    },
+    "student_count": {
+      "type": "number",
+      "default": 0
+    }
+  },
+  "required": [
+    "name",
+    "school",
+    "teacher_email"
+  ]
+}

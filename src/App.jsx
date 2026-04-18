@@ -9,6 +9,8 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
+import TeacherPanel from './pages/TeacherPanel';
+import TokenWallet from './pages/TokenWallet';
 
 const { Pages, Layout, mainPage } = pagesConfig;
 const mainPageKey = mainPage ?? Object.keys(Pages)[0];
@@ -60,6 +62,8 @@ const AuthenticatedApp = () => {
           }
         />
       ))}
+      <Route path="/TeacherPanel" element={<LayoutWrapper currentPageName="TeacherPanel"><TeacherPanel /></LayoutWrapper>} />
+      <Route path="/TokenWallet" element={<LayoutWrapper currentPageName="TokenWallet"><TokenWallet /></LayoutWrapper>} />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

@@ -12,6 +12,7 @@ import ChatInput from '@/components/chat/ChatInput';
 import ThinkingIndicator from '@/components/chat/ThinkingIndicator';
 import Avatar3D from '@/components/avatars/Avatar3D';
 import { useLocalLLM } from '@/hooks/useLocalLLM';
+import ProofOfLearningButton from '@/components/chat/ProofOfLearningButton';
 
 const modes = {
   tutor: { 
@@ -753,6 +754,15 @@ Pregunta del estudiante: ${message}\n\n${profile?.companion_name}:`;
           <div ref={messagesEndRef} />
         </div>
       </main>
+
+      {/* Proof of Learning */}
+      {!isGuestMode && profile && messages.length >= 4 && (
+        <ProofOfLearningButton
+          profile={profile}
+          messages={messages}
+          currentMode={currentMode}
+        />
+      )}
 
       {/* Input */}
       <div className="relative">

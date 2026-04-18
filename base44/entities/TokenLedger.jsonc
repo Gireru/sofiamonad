@@ -1,0 +1,50 @@
+{
+  "name": "TokenLedger",
+  "type": "object",
+  "properties": {
+    "student_id": {
+      "type": "string",
+      "description": "ID del estudiante"
+    },
+    "student_name": {
+      "type": "string"
+    },
+    "school": {
+      "type": "string",
+      "description": "Nombre de la escuela"
+    },
+    "classroom_id": {
+      "type": "string",
+      "description": "ID del sal\u00f3n"
+    },
+    "teacher_email": {
+      "type": "string"
+    },
+    "total_tokens": {
+      "type": "number",
+      "default": 0,
+      "description": "Total de SofiaCoins acumulados"
+    },
+    "pending_tokens": {
+      "type": "number",
+      "default": 0,
+      "description": "Tokens pendientes de aprobaci\u00f3n del maestro"
+    },
+    "approved_tokens": {
+      "type": "number",
+      "default": 0,
+      "description": "Tokens aprobados por el maestro"
+    },
+    "blockchain_hash": {
+      "type": "string",
+      "description": "Hash del registro (blockchain-ready)"
+    },
+    "last_earn_date": {
+      "type": "string",
+      "format": "date"
+    }
+  },
+  "required": [
+    "student_id"
+  ]
+}

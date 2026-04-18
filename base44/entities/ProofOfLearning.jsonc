@@ -1,0 +1,65 @@
+{
+  "name": "ProofOfLearning",
+  "type": "object",
+  "properties": {
+    "student_id": {
+      "type": "string"
+    },
+    "student_name": {
+      "type": "string"
+    },
+    "classroom_id": {
+      "type": "string"
+    },
+    "teacher_email": {
+      "type": "string"
+    },
+    "subject": {
+      "type": "string"
+    },
+    "topic": {
+      "type": "string",
+      "description": "Tema espec\u00edfico demostrado"
+    },
+    "grade": {
+      "type": "string"
+    },
+    "tokens_earned": {
+      "type": "number",
+      "default": 0
+    },
+    "ai_evaluation": {
+      "type": "string",
+      "description": "Evaluaci\u00f3n de la IA"
+    },
+    "ai_score": {
+      "type": "number",
+      "description": "Puntaje 0-100"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "pending",
+        "approved",
+        "rejected",
+        "minted"
+      ],
+      "default": "pending"
+    },
+    "teacher_notes": {
+      "type": "string"
+    },
+    "certificate_hash": {
+      "type": "string",
+      "description": "Hash SHA256 del certificado"
+    },
+    "conversation_id": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "student_id",
+    "subject",
+    "topic"
+  ]
+}

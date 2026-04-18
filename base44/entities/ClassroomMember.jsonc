@@ -1,0 +1,23 @@
+{
+  "name": "ClassroomMember",
+  "type": "object",
+  "properties": {
+    "classroom_id": {
+      "type": "string"
+    },
+    "student_id": {
+      "type": "string"
+    },
+    "student_name": {
+      "type": "string"
+    },
+    "joined_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "classroom_id",
+    "student_id"
+  ]
+}
