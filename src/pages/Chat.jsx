@@ -63,6 +63,13 @@ export default function Chat() {
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
+    const missionParam = params.get('mission');
+    if (missionParam) {
+      loadProfile();
+      // El mensaje de misión se inyecta después de cargar el perfil
+      sessionStorage.setItem('pending_mission', decodeURIComponent(missionParam));
+      return;
+    }
     if (params.get('mode') === 'guest') {
       setIsGuestMode(true);
       setProfile({
@@ -127,6 +134,16 @@ export default function Chat() {
       }
 
       if (currentProfile) {
+        // Inyectar misión pendiente si existe
+        const pendingMission = sessionStorage.getItem('pending_mission');
+        if (pendingMission) {
+          sessionStorage.removeItem('pending_mission');
+          setMessages([{
+            role: 'assistant',
+            content: `📨 ¡Tu profe mandó una misión especial!\n\n**${pendingMission}**\n\n¿Empezamos? 🚀`
+          }]);
+        }
+
         // Determinar auto-play y auto-save según grado
         const gradeNumber = parseInt(currentProfile.grade?.split('_')[0] || '4');
         const isPrimary = currentProfile.grade?.includes('primaria');

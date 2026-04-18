@@ -11,6 +11,7 @@ import Avatar3D from '@/components/avatars/Avatar3D';
 import StatsCard from '@/components/dashboard/StatsCard';
 import QuickActions from '@/components/dashboard/QuickActions';
 import AchievementBadge from '@/components/dashboard/AchievementBadge';
+import MissionInbox from '@/components/dashboard/MissionInbox';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -170,6 +171,9 @@ export default function Dashboard() {
               </div>
             </div>
           </motion.section>
+
+          {/* Misiones del maestro */}
+          <MissionInbox profile={profile} />
 
           {/* Quick actions */}
           <section>
