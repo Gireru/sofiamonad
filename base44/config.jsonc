@@ -1,0 +1,9 @@
+{
+  "name": "Sofia: Tu Compa\u00f1ero de Aprendizaje MONAD",
+  "site": {
+    "installCommand": "npm install",
+    "buildCommand": "npm run build",
+    "serveCommand": "npm run dev",
+    "outputDirectory": "./dist"
+  }
+}
