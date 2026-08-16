@@ -1,0 +1,56 @@
+{
+  "name": "SafetyAlert",
+  "type": "object",
+  "properties": {
+    "student_id": {
+      "type": "string",
+      "description": "ID del estudiante"
+    },
+    "alert_type": {
+      "type": "string",
+      "enum": [
+        "sadness",
+        "anxiety",
+        "danger",
+        "inappropriate_request"
+      ],
+      "description": "Tipo de alerta detectada"
+    },
+    "detected_keywords": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Palabras clave que activaron la alerta"
+    },
+    "student_message": {
+      "type": "string",
+      "description": "Mensaje original del estudiante"
+    },
+    "ai_response": {
+      "type": "string",
+      "description": "Respuesta generada por el sistema"
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "default": "low"
+    },
+    "reviewed_by_parent": {
+      "type": "boolean",
+      "default": false
+    },
+    "parent_notes": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "student_id",
+    "alert_type",
+    "student_message"
+  ]
+}

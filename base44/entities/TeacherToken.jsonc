@@ -1,0 +1,35 @@
+{
+  "name": "TeacherToken",
+  "type": "object",
+  "properties": {
+    "token_code": {
+      "type": "string",
+      "description": "C\u00f3digo \u00fanico para vincular maestro"
+    },
+    "student_id": {
+      "type": "string",
+      "description": "ID del estudiante"
+    },
+    "parent_email": {
+      "type": "string",
+      "description": "Email del padre que gener\u00f3 el token"
+    },
+    "teacher_email": {
+      "type": "string",
+      "description": "Email del maestro vinculado"
+    },
+    "is_used": {
+      "type": "boolean",
+      "default": false
+    },
+    "expires_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "required": [
+    "token_code",
+    "student_id",
+    "parent_email"
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "name": "ParentAccess",
+  "type": "object",
+  "properties": {
+    "access_code": {
+      "type": "string",
+      "description": "C\u00f3digo \u00fanico para acceso del padre"
+    },
+    "student_id": {
+      "type": "string",
+      "description": "ID del perfil del estudiante"
+    },
+    "parent_email": {
+      "type": "string",
+      "description": "Email del padre vinculado"
+    },
+    "is_active": {
+      "type": "boolean",
+      "default": true
+    }
+  },
+  "required": [
+    "access_code",
+    "student_id"
+  ]
+}

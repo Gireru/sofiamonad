@@ -1,0 +1,55 @@
+{
+  "name": "StudentInventory",
+  "type": "object",
+  "properties": {
+    "student_id": {
+      "type": "string",
+      "description": "ID del estudiante"
+    },
+    "neuronas": {
+      "type": "number",
+      "default": 0,
+      "description": "Moneda virtual del estudiante"
+    },
+    "owned_items": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "IDs de items cosm\u00e9ticos comprados"
+    },
+    "equipped_items": {
+      "type": "object",
+      "properties": {
+        "hat": {
+          "type": "string"
+        },
+        "glasses": {
+          "type": "string"
+        },
+        "background": {
+          "type": "string"
+        },
+        "accessory": {
+          "type": "string"
+        }
+      }
+    },
+    "current_streak": {
+      "type": "number",
+      "default": 0,
+      "description": "D\u00edas consecutivos estudiando"
+    },
+    "longest_streak": {
+      "type": "number",
+      "default": 0
+    },
+    "last_active_date": {
+      "type": "string",
+      "format": "date"
+    }
+  },
+  "required": [
+    "student_id"
+  ]
+}

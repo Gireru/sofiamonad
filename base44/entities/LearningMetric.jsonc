@@ -1,0 +1,37 @@
+{
+  "name": "LearningMetric",
+  "type": "object",
+  "properties": {
+    "student_id": {
+      "type": "string"
+    },
+    "date": {
+      "type": "string",
+      "format": "date"
+    },
+    "subject": {
+      "type": "string"
+    },
+    "topic": {
+      "type": "string"
+    },
+    "minutes_spent": {
+      "type": "number"
+    },
+    "questions_asked": {
+      "type": "number"
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "tutor",
+        "creative",
+        "free"
+      ]
+    }
+  },
+  "required": [
+    "student_id",
+    "date"
+  ]
+}

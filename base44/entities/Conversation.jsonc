@@ -1,0 +1,65 @@
+{
+  "name": "Conversation",
+  "type": "object",
+  "properties": {
+    "student_id": {
+      "type": "string",
+      "description": "ID del perfil del estudiante"
+    },
+    "title": {
+      "type": "string",
+      "description": "T\u00edtulo de la conversaci\u00f3n"
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "tutor",
+        "creative",
+        "free"
+      ],
+      "description": "Modo de conversaci\u00f3n"
+    },
+    "subject": {
+      "type": "string",
+      "enum": [
+        "matematicas",
+        "espanol",
+        "ciencias",
+        "historia",
+        "geografia",
+        "civica",
+        "arte",
+        "general"
+      ],
+      "description": "Materia de la conversaci\u00f3n"
+    },
+    "messages": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "role": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "topics_covered": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Temas cubiertos en la conversaci\u00f3n"
+    }
+  },
+  "required": [
+    "student_id",
+    "mode"
+  ]
+}

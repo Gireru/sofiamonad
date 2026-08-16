@@ -1,0 +1,77 @@
+{
+  "name": "CommunityPost",
+  "type": "object",
+  "properties": {
+    "author_id": {
+      "type": "string"
+    },
+    "author_name": {
+      "type": "string"
+    },
+    "author_role": {
+      "type": "string",
+      "enum": [
+        "student",
+        "teacher",
+        "parent"
+      ]
+    },
+    "author_avatar": {
+      "type": "string"
+    },
+    "school": {
+      "type": "string"
+    },
+    "content": {
+      "type": "string"
+    },
+    "image_url": {
+      "type": "string"
+    },
+    "likes": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "comments": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "author_id": {
+            "type": "string"
+          },
+          "author_name": {
+            "type": "string"
+          },
+          "author_role": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string"
+          },
+          "created_at": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "post_type": {
+      "type": "string",
+      "enum": [
+        "question",
+        "article",
+        "photo",
+        "announcement"
+      ],
+      "default": "article"
+    }
+  },
+  "required": [
+    "author_id",
+    "author_name",
+    "school",
+    "content"
+  ]
+}

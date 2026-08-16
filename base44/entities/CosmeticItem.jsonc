@@ -1,0 +1,42 @@
+{
+  "name": "CosmeticItem",
+  "type": "object",
+  "properties": {
+    "item_id": {
+      "type": "string",
+      "description": "ID \u00fanico del cosm\u00e9tico (ej: hat_wizard, bg_space)"
+    },
+    "name": {
+      "type": "string",
+      "description": "Nombre del item"
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "hat",
+        "glasses",
+        "background",
+        "accessory"
+      ],
+      "description": "Tipo de cosm\u00e9tico"
+    },
+    "emoji": {
+      "type": "string",
+      "description": "Emoji que representa el item"
+    },
+    "cost": {
+      "type": "number",
+      "description": "Costo en Neuronas"
+    },
+    "is_premium": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "item_id",
+    "name",
+    "type",
+    "cost"
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "name": "StudentProfile",
+  "type": "object",
+  "properties": {
+    "display_name": {
+      "type": "string",
+      "description": "Nombre del estudiante"
+    },
+    "grade": {
+      "type": "string",
+      "enum": [
+        "1_primaria",
+        "2_primaria",
+        "3_primaria",
+        "4_primaria",
+        "5_primaria",
+        "6_primaria",
+        "1_secundaria",
+        "2_secundaria",
+        "3_secundaria"
+      ],
+      "description": "Grado escolar"
+    },
+    "avatar_type": {
+      "type": "string",
+      "enum": [
+        "robot",
+        "owl",
+        "fox",
+        "boy",
+        "girl"
+      ],
+      "description": "Tipo de avatar elegido"
+    },
+    "companion_name": {
+      "type": "string",
+      "description": "Nombre del compa\u00f1ero de estudio"
+    },
+    "companion_personality": {
+      "type": "string",
+      "enum": [
+        "lia",
+        "leo",
+        "custom"
+      ],
+      "description": "Personalidad del compa\u00f1ero"
+    },
+    "parent_email": {
+      "type": "string",
+      "description": "Email del padre/tutor"
+    },
+    "strict_mode": {
+      "type": "boolean",
+      "default": false,
+      "description": "Modo estricto de b\u00fasquedas"
+    },
+    "total_sessions": {
+      "type": "number",
+      "default": 0
+    },
+    "total_minutes": {
+      "type": "number",
+      "default": 0
+    },
+    "xp_points": {
+      "type": "number",
+      "default": 0
+    },
+    "achievements": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "onboarding_completed": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "display_name"
+  ]
+}
